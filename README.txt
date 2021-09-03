@@ -1,1 +1,0 @@
-Le fichier de la simulation principale se trouve dans IonSatSimulation_R2019a et s'appelle IonSatSimulation.slx. Les autres contiennent soit des versions plus vieilles, soit des morceaux, soit des essais ratés. 
