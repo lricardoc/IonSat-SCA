@@ -18,7 +18,7 @@ load('data.mat')
 load('Simulation.mat')
 
 %Not necessary while perturbations not implemented
-%load('LOAS.mat')
+load('LOAS.mat')
 
 %% Declare variables
 
