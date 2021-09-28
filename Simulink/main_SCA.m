@@ -3,25 +3,44 @@ clear all
 close all
 clc
 
-%% change working directory to the curent script location
-% mfile_name          = mfilename('fullpath');
-% [pathstr,name,ext]  = fileparts(mfile_name);
-% cd(pathstr);
-
-
 %% Loading the Data
-
 %Loads the necessary physical variables describing the satellite and its
 %components
 load('SatConstants.mat')
 load('data.mat')
 load('Simulation.mat')
-
+load('C.mat')
+load('F.mat')
+load('P.mat')
+load('T.mat')
+load('workspace.mat')
 %Not necessary while perturbations not implemented
 load('LOAS.mat')
 
-%% Declare variables
+%% Orbit and attitude parameters
+%Orbit simulation
+%Initialisation of Keplerian parameters
+% a = 6678; %semimajor axis (km)
+% e = 0.001; %eccentricity
+% i = 51.6; %inclination (degrees)
+% O = 300.5; %Right ascension of the right ascending node (degrees) %max 197, min 300.5 %181
+% o = 0; %Argument of the perigee (degrees)                      %max 90, min 0      %90
+% nu = 0; %True anomaly (degrees)
+% 
+% %Initialisation of date
+% year = 2020;
+% month = 1;
+% day = 1;
+% hours = 0;
+% minutes = 0;
+% seconds = 0;
+% 
+% %Simulation time parameters
+% N_orbits = 2;
+% %Torbit=90*60;       %1 orbit approx. 90 minutes
+% Torbit=2*pi*sqrt(a^3/(3.986004418E5));
 
+%% Declare variables
 %time step based on gyro sampling frequency: 
 TimeStep = 1;
 
@@ -35,7 +54,14 @@ nmax = 2;
 
 %Determine whether you are using full IGRF model or dipole approximation
 %1 for true, 0 for false
-Use_IGRF = 0; 
+%Use_IGRF = 0; 
+Use_IGRF = 1; 
+%Determine whether you are using full IGRF model or dipole approximation
+%for the Kalman Filter
+%1 for true, 0 for false
+%Use_IGRF_KF = 0; 
+Use_IGRF_KF = 1; 
+
 
 %Decide whether you'd like to use control or not
 %A value of 1 (True) entails that you'd like to simulate a realistic model
@@ -77,10 +103,10 @@ GQG = Gk*Qk*(Gk.');
 Pinv_RW_repartition
 
 %% Load the simulink model
-IonSatSimulation
+IonSatSimulationR2019A
 
 %% Load the simulink model
-load_system("IonSatSimulation.slx")
+load_system("IonSatSimulationR2019A.slx")
 
 %% Run the simulink 
 simOut = sim("IonSatSimulation1");
