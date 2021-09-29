@@ -18,49 +18,76 @@ load('workspace.mat')
 load('LOAS.mat')
 
 %% Orbit and attitude parameters
-%Orbit simulation
-%Initialisation of Keplerian parameters
-% a = 6678; %semimajor axis (km)
-% e = 0.001; %eccentricity
-% i = 51.6; %inclination (degrees)
-% O = 300.5; %Right ascension of the right ascending node (degrees) %max 197, min 300.5 %181
-% o = 0; %Argument of the perigee (degrees)                      %max 90, min 0      %90
-% nu = 0; %True anomaly (degrees)
-% 
-% %Initialisation of date
-% year = 2020;
-% month = 1;
-% day = 1;
-% hours = 0;
-% minutes = 0;
-% seconds = 0;
-% 
-% %Simulation time parameters
-% N_orbits = 2;
-% %Torbit=90*60;       %1 orbit approx. 90 minutes
-% Torbit=2*pi*sqrt(a^3/(3.986004418E5));
+%Orbit: Initialisation of Keplerian parameters
+orbit.a = 7000;     %semimajor axis [km]
+orbit.e = 0.00;     %eccentricity
+orbit.i = 51.6;     %inclination [degrees]
+orbit.O = 146;      %Right ascension of the right ascending node [degrees] %max 197, min 300.5 %181
+orbit.o = 344;      %Argument of the perigee [degrees]                      %max 90, min 0      %90
+orbit.nu = 0;       %True anomaly [degrees]
+
+%Attitude: Initialisation of angles and rotational speeds:
+%Initial orientation in ZYX (alpha,beta,gamma) Euler angles [degrees]
+att.alpha = 90;     
+att.beta = 0;
+att.gamma = 0;
+%Initial angular velocities in each axis (x,y,z) of body frame [degrees/sec]
+att.wx0 = 10;        
+att.wy0 = 5;
+att.wz0 = 7;
+
+%POINTING MODE
+MODE = 2;   %"sun-aero" pointing mode
+% 1: "orbital" Reference quaternion is aligned with ORF. 
+% 2: "sun-aero" Reference quaternion is such that x is aligned with velocity 
+%and z is aligned as best as possible with the sun direction to maximize the power generation 
+% 3: "sun pointing" Reference quaternion is such that z is aligned with with 
+%the sun direction to maximize the power generation and x is aligned as best 
+%as possible with the velocity direction. 
+% 4: "aero-drag" Reference quaternion is similar than in Case 1, but rotated 
+%90° along the y axis, therefore, the reference quaternion is an attitude for 
+%maximizing the drag surface. 
+% 5: "retrogade firing" Reference quaternion is similar than in Case 1, but 
+%rotated 180° along the z axis, therefore, the reference quaternion is an 
+%attitude for retrograde propulsion. (??should be like case 2 but rotated?)
+% 6: Reference quaternion is static [1 0 0 0], but this time is the only case 
+%where the state of the B-dot is enabled (1). 
+% 7: Reference quaternion is a custom quaternion that has to be defined by the 
+%user as an input to the mission block. 
+
+%Initialisation of date
+date.year = 2022;
+date.month = 1;
+date.day = 1;
+date.hours = 0;
+date.minutes = 0;
+date.seconds = 0;
+
 
 %% Declare variables
 %time step based on gyro sampling frequency: 
-TimeStep = 1;
+TimeStep = 0.25;        %fixed-step size in solver, Default time step=0.25
+Torbit=2*pi*sqrt((orbit.a)^3/(3.986004418E5));
+N_orbits = 2;           %number of orbits to be simulated
+%Time spent performing the simulation in seconds (one orbit is ~5400 s):
+t_sim = N_orbits*Torbit;
+%t_sim = 10800;
+%OrbitSize = 5400;
 
-%Time spent performing the simulation in seconds (one orbit is 5400 s):
-t_sim = 10800;
-OrbitSize = 5400;
-
+%% Other blocks configuration
 %Determine the order of approximation for IGRF model of the earth's
 %magnetic field nmax (must be equal or less than 13)
 nmax = 2;
 
 %Determine whether you are using full IGRF model or dipole approximation
 %1 for true, 0 for false
-%Use_IGRF = 0; 
-Use_IGRF = 1; 
+Use_IGRF = 0; 
+%Use_IGRF = 1; 
 %Determine whether you are using full IGRF model or dipole approximation
 %for the Kalman Filter
 %1 for true, 0 for false
-%Use_IGRF_KF = 0; 
-Use_IGRF_KF = 1; 
+Use_IGRF_KF = 0; 
+%Use_IGRF_KF = 1; 
 
 
 %Decide whether you'd like to use control or not
