@@ -136,7 +136,7 @@ Vcss=sat.sensors.sun_coarse_sigma^2;
 Vcss=0.1745^2;
 %Vcss=(1e-1)^2;
 
-A_MEKFv5tests
+MEKFsimR2019a
 data=sim('MEKFsimR2019a');
 
 %% Run post-processing functions
