@@ -19,7 +19,7 @@ load('LOAS.mat')
 
 %% Orbit and attitude parameters
 %Orbit: Initialisation of Keplerian parameters
-orbit.a = 7000;     %semimajor axis [km]
+orbit.a = 6678;     %semimajor axis [km]
 orbit.e = 0.00;     %eccentricity
 orbit.i = 51.6;     %inclination [degrees]
 orbit.O = 146;      %Right ascension of the right ascending node [degrees] %max 197, min 300.5 %181
@@ -28,11 +28,11 @@ orbit.nu = 0;       %True anomaly [degrees]
 
 %Attitude: Initialisation of angles and rotational speeds:
 %Initial orientation in ZYX (alpha,beta,gamma) Euler angles [degrees]
-att.alpha = 90;     
-att.beta = 0;
-att.gamma = 0;
+att.alpha = 40;     
+att.beta = -10;
+att.gamma = 60;
 %Initial angular velocities in each axis (x,y,z) of body frame [degrees/sec]
-att.wx0 = 10;        
+att.wx0 = -4;        
 att.wy0 = 5;
 att.wz0 = 7;
 
@@ -126,7 +126,7 @@ Q4 = ((sigma_b^2)*dt) .* eye(3);
 Qk = [Q1 Q2; Q3 Q4];
 GQG = Gk*Qk*(Gk.');
 
-%% Calculate the pseudo inverse matrix
+% Calculate the pseudo inverse matrix
 Pinv_RW_repartition
 
 %% Load the simulink model
