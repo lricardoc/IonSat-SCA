@@ -20,7 +20,7 @@ load('LOAS.mat')
 %% Orbit and attitude parameters
 %Orbit: Initialisation of Keplerian parameters
 orbit.a = 6678;     %semimajor axis [km]
-orbit.e = 0.00;     %eccentricity
+orbit.e = 0.001;     %eccentricity
 orbit.i = 51.6;     %inclination [degrees]
 orbit.O = 146;      %Right ascension of the right ascending node [degrees] %max 197, min 300.5 %181
 orbit.o = 344;      %Argument of the perigee [degrees]                      %max 90, min 0      %90

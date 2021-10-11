@@ -11,6 +11,9 @@ qy=u(3);
 qz=u(4);   
    
    angle = 2 * acos(qw);
+   if angle > pi
+       angle=angle-2*pi;
+   end
    s = sqrt(1-qw*qw); % assuming quaternion normalised then w is less than 1, so term always positive.
    if (s < 0.001) 
        % test to avoid divide by zero, s is always positive due to sqrt
