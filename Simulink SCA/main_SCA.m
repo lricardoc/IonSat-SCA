@@ -51,5 +51,5 @@ Use_IGRF = 0;
 % Calculate the pseudo inverse matrix
 Pinv_RW_repartition
 
-Control
+ControlR2019A
 
