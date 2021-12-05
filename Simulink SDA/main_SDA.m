@@ -5,18 +5,18 @@ clear
 %The object is assumed submitted only to gravity and it's mass is m in kg
 m = 10; %mass (kg)
 %Initialisation of Keplerian parameters
-a = 6678; %semimajor axis (km)
+a = 6978; %semimajor axis (km)
 e = 0.001; %eccentricity
-i = 51.6; %inclination (degrees)
-O = 300.5; %Right ascension of the right ascending node (degrees) %max 197, min 300.5 %181
+i = 98; %inclination (degrees)
+O = 50; %Right ascension of the right ascending node (degrees) %max 197, min 300.5 %181
 o = 0; %Argument of the perigee (degrees)                      %max 90, min 0      %90
 nu = 0; %True anomaly (degrees)
 
 %Initialisation of date
-year = 2020;
-month = 1;
-day = 1;
-hours = 0;
+year = 2019;
+month = 3;
+day = 21;
+hours = 5;
 minutes = 0;
 seconds = 0;
 
@@ -59,9 +59,9 @@ sat.sensors.mag_sigma=5.0e-08;
 PSDmtm=sat.sensors.mag_sigma^2*Tss;
 %b) Gyrometer 
 sat.sensors.gyro_sigma=2.620e-04; %original value
-sat.sensors.gyro_sigma=0.5e-04; %to test
+sat.sensors.gyro_sigma=0.2e-04; %to test
 sat.sensors.gyro_bias=1.160e-04; %original value
-sat.sensors.gyro_bias=1.160e-04; %to test
+sat.sensors.gyro_bias=0.160e-05; %to test
 PSDgyro=sat.sensors.gyro_sigma^2*Ts;
 PSDbias=sat.sensors.gyro_bias^2*Ts;
 b_offset=2e-4;
@@ -69,6 +69,7 @@ b_offset=2e-2;
 b_offset=sat.sensors.gyro_bias;
 %b_offset=0e-2;
 b_offset2=-1e-2;    %for the triangular signal
+b_offset2=0;    %for the triangular signal
 %b_offset2=sat.sensors.gyro_bias;
 %c) Fin Sun Sensor (FSS)
 sat.sensors.sun_sigma=0.001164;
@@ -98,10 +99,10 @@ b_hat0=[0;0;0];
 
 %System state noise matrix, the covariance of the process noise matrix Wd
 Vg=sat.sensors.gyro_sigma^2;  %ok
-Vg=(5e-5)^2';
+Vg=(5e-5)^2;
 Vb=sat.sensors.gyro_bias^2;   %ok
 Vb=(5.16e-6)^2; %OK
-Vb=(4.16e-5)^2; %OK
+Vb=(0.16e-5)^2; %OK
 %Vb=1e-12;
 
 Q11 = ((Vg*dt+(1/3)*Vb*dt^3))*eye(3);
@@ -133,7 +134,7 @@ Vmtm=sat.sensors.mag_sigma^2;
 Vfss=sat.sensors.sun_sigma^2;
 %Vfss=0.002^2; %repeat again here modify %ok 0.0012
 Vcss=sat.sensors.sun_coarse_sigma^2;
-Vcss=0.1745^2;
+Vcss=0.01745^2;
 %Vcss=(1e-1)^2;
 
 MEKFsimR2019a
@@ -169,7 +170,7 @@ set(gcf,'color','w');
         plot(tplot,Q_est(:,1)+3*(P(:,1)),'m--','LineWidth',1)
         plot(tplot,Q_est(:,1)-3*(P(:,1)),'m--','LineWidth',1)
         legend('Real value','Estimated value')
-        title('Comparison of the estimated and real values for the satellite quaternion')
+        title('Q0: Comparison of the estimated and real values for the satellite quaternion')
         ylabel('')
         xlabel('time in seconds')
         grid on
@@ -180,7 +181,7 @@ set(gcf,'color','w');
         plot(tplot,Q_est(:,2)+3*(P(:,1)),'m--','LineWidth',1)
         plot(tplot,Q_est(:,2)-3*(P(:,1)),'m--','LineWidth',1)
         legend('Real value','Estimated value')
-        title('Comparison of the estimated and real values for the satellite quaternion')
+        title('Q1: Comparison of the estimated and real values for the satellite quaternion')
         ylabel('')
         xlabel('time in seconds')
         grid on
@@ -191,7 +192,7 @@ set(gcf,'color','w');
         plot(tplot,Q_est(:,3)+3*(P(:,2)),'m--','LineWidth',1)
         plot(tplot,Q_est(:,3)-3*(P(:,2)),'m--','LineWidth',1)
         legend('Real value','Estimated value')
-        title('Comparison of the estimated and real values for the satellite quaternion')
+        title('Q2: Comparison of the estimated and real values for the satellite quaternion')
         ylabel('')
         xlabel('time in seconds')
         grid on
@@ -202,7 +203,7 @@ set(gcf,'color','w');
         plot(tplot,Q_est(:,4)+3*(P(:,3)),'m--','LineWidth',1)
         plot(tplot,Q_est(:,4)-3*(P(:,3)),'m--','LineWidth',1)
         legend('Real value','Estimated value')
-        title('Comparison of the estimated and real values for the satellite quaternion')
+        title('Q3: Comparison of the estimated and real values for the satellite quaternion')
         ylabel('')
         xlabel('time in seconds')
         grid on
@@ -216,7 +217,7 @@ set(gcf,'color','w');
 %         plot(b_est(:,1)+3*P(:,4),'m--','LineWidth',1)
 %         plot(b_est(:,1)-3*P(:,4),'m--','LineWidth',1)
         legend('Real value','Estimated value')
-        title('Comparison of the estimated and real values for the bias in gyro')
+        title('Comparison of the estimated and real values for the bias in gyro: Bias x')
         ylabel('rad^2/s')
         xlabel('time in seconds')
         grid on
@@ -227,7 +228,7 @@ set(gcf,'color','w');
 %         plot(b_est(:,2)+3*P(:,5),'m--','LineWidth',1)
 %         plot(b_est(:,2)-3*P(:,5),'m--','LineWidth',1)
         legend('Real value','Estimated value')
-        title('Comparison of the estimated and real values for the bias in gyro')
+        title('Bias y')
         ylabel('rad^2/s')
         xlabel('time in seconds')
         grid on
@@ -238,7 +239,7 @@ set(gcf,'color','w');
 %         plot(b_est(:,3)+3*P(:,6),'m--','LineWidth',1)
 %         plot(b_est(:,3)-3*P(:,6),'m--','LineWidth',1)
         legend('Real value','Estimated value')
-        title('Comparison of the estimated and real values for the bias in gyro')
+        title('Bias z')
         ylabel('rad^2/s')
         xlabel('time in seconds')
         grid on
@@ -252,7 +253,7 @@ set(gcf,'color','w');
         plot(W_est(:,1)+3*P(:,4),'m--','LineWidth',1)
         plot(W_est(:,1)-3*P(:,4),'m--','LineWidth',1)
         legend('Real value','Estimated value')
-        title('Comparison of the estimated and real values for the satellite angular velocity')
+        title('Comparison of the estimated and real values for the satellite angular velocity: Wx')
         ylabel('')
         xlabel('time in seconds')
         grid on
@@ -263,7 +264,7 @@ set(gcf,'color','w');
         plot(W_est(:,2)+3*P(:,5),'m--','LineWidth',1)
         plot(W_est(:,2)-3*P(:,5),'m--','LineWidth',1)
         legend('Real value','Estimated value')
-        title('Comparison of the estimated and real values for the satellite quaternion')
+        title('Wy')
         ylabel('')
         xlabel('time in seconds')
         grid on
@@ -274,7 +275,7 @@ set(gcf,'color','w');
         plot(W_est(:,3)+3*P(:,6),'m--','LineWidth',1)
         plot(W_est(:,3)-3*P(:,6),'m--','LineWidth',1)
         legend('Real value','Estimated value')
-        title('Comparison of the estimated and real values for the satellite quaternion')
+        title('Wz')
         ylabel('')
         xlabel('time in seconds')
         grid on
@@ -319,6 +320,12 @@ set(gcf,'color','w');
  set(gcf,'color','w');
     subplot(2,1,1)
     %plot(tplot, rad2deg(quat2eul(Q_error)),'LineWidth',1)
+    error=rad2deg(2*acos(Q_error(:,1)));
+    for i=1:length(error)
+        if error(i)>180
+            error(i)=360-error(i);
+        end
+    end
     plot(tplot, rad2deg(2*acos(Q_error(:,1))),'LineWidth',1)
     title('Error angles (current implementation)')
     ylabel('Degrees')

@@ -130,11 +130,21 @@ GQG = Gk*Qk*(Gk.');
 % Calculate the pseudo inverse matrix
 Pinv_RW_repartition
 
-%% Load the simulink model
-IonSatSimulationR2019A
+%Aerodynamic Torque Constants
+%load('LOAS.mat')
+load('IonSat_6U.mat');
+IonSataero.T = SNAP_aeromodel.T;
+IonSataero.pitch = SNAP_aeromodel.pitch;
+IonSataero.roll = SNAP_aeromodel.roll;
+IonSataero.av_density_vs_alt = SNAP_aeromodel.av_density_vs_alt;
+IonSataero.alt_range = SNAP_aeromodel.alt_range;
+
 
 %% Load the simulink model
-load_system("IonSatSimulationR2019A.slx")
+IonSatSimulationC
+
+%% Load the simulink model
+load_system("IonSatSimulationC.slx")
 
 %% Run the simulink 
-simOut = sim("IonSatSimulation1");
+simOut = sim("IonSatSimulationC");
