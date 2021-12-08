@@ -53,6 +53,11 @@ y_range = (cg-wid/2):(cg+wid/2);
 z_range = (cg-hei/2):(cg+hei/2);
 volume(x_range,y_range,z_range) = 1;
 
+x_range = 112:248;
+y_range = 60:300;
+z_range = 199;
+volume(x_range,y_range,z_range) = 1;
+
 x_range = (cg-len/2)+1:(cg+len/2)-1;    %original MDQ
 y_range = (cg-wid/2)+1:(cg+wid/2)-1;    %original MDQ
 %z_range = (cg-wid/2)+2:(cg+wid/2)-2;    %original MDQ
@@ -70,10 +75,7 @@ volume(x_range,y_range,z_range) = NaN;
 %y_range = 120:240;
 %y_range = 125:235; %OK
 %z_range = 188; %OK
-x_range = 112:248;
-y_range = 60:300;
-z_range = 199;
-volume(x_range,y_range,z_range) = 1;
+
 
 
 %% CG Correction

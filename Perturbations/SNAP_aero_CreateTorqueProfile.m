@@ -81,7 +81,8 @@ for iroll = 1:length(roll)
         
         T(iroll, ipitch) =  sqrt(temp(1)^2+temp(2)^2+temp(3)^2);
         disp(['pitch: ' num2str(pitch(ipitch)*180/pi) '/180, roll: '  num2str(roll(iroll)*180/pi) '/45' ', Torque =' num2str(temp)])
-        
+        Torque_u_y (iroll, ipitch)= temp(2);
+        Torque_u_z (iroll, ipitch)= temp(3);
         %           pause
     end
     
@@ -91,6 +92,8 @@ end
 %T(T<1e-8) = 0;
 
 SNAP_aeromodel.T = [T' fliplr(T')];
+SNAP_aeromodel.Torque_u_y = [Torque_u_y' fliplr(Torque_u_y')];
+SNAP_aeromodel.Torque_u_z = [Torque_u_z' fliplr(Torque_u_z')];
 
 SNAP_aeromodel.pitch = pitch;
 SNAP_aeromodel.roll = [roll roll+roll(length(roll))];

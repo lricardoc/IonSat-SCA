@@ -33,7 +33,7 @@ date.seconds = 0;
 load('SatConstants.mat')
 
 %Aerodynamic Torque Constants
-%load('LOAS.mat')
+%load('LOAS.mat')`
 load('IonSat_6U.mat');
 IonSataero.T = SNAP_aeromodel.T;
 IonSataero.pitch = SNAP_aeromodel.pitch;
@@ -41,5 +41,5 @@ IonSataero.roll = SNAP_aeromodel.roll;
 IonSataero.av_density_vs_alt = SNAP_aeromodel.av_density_vs_alt;
 IonSataero.alt_range = SNAP_aeromodel.alt_range;
 
-distmodel_v3
+distmodel_v4
 

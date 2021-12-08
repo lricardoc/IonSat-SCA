@@ -140,7 +140,7 @@ IonSataero.av_density_vs_alt = SNAP_aeromodel.av_density_vs_alt;
 IonSataero.alt_range = SNAP_aeromodel.alt_range;
 
 
-%% Load the simulink model
+%% Open the simulink model
 IonSatSimulationC
 
 %% Load the simulink model
