@@ -3,25 +3,49 @@ clear
 
 %Orbit simulation
 %The object is assumed submitted only to gravity and it's mass is m in kg
-m = 10; %mass (kg)
+m = 12; %mass (kg)
 %Initialisation of Keplerian parameters
-a = 6978; %semimajor axis (km)
-e = 0.001; %eccentricity
-i = 98; %inclination (degrees)
-O = 50; %Right ascension of the right ascending node (degrees) %max 197, min 300.5 %181
-o = 0; %Argument of the perigee (degrees)                      %max 90, min 0      %90
-nu = 0; %True anomaly (degrees)
+a = 6678;     %semimajor axis [km]
+e = 0.001;    %eccentricity
+i = 98;     %inclination [degrees]
+O =  10;      %Right ascension of the right ascending node [degrees] %max 197, min 300.5 %181
+o = 90;      %Argument of the perigee [degrees]                      %max 90, min 0      %90
+nu = 0;       %True anomaly [degrees]
+%beta angle  ~9 deg. 21/3, i=98, O=10, 
+%beta angle ~29 deg. 21/3, i=98, O=30,
+%beta angle ~48 deg. 21/3, i=98, O=50,  
+%i = 98: notice that for the date 21/3 (equinox) the RAAN (O) is close to the beta angle.
+
+%POINTING MODE
+MODE = 2;   %"sun-aero" pointing mode
+% 1: "orbital" Reference quaternion is aligned with ORF. 
+% 2: "sun-aero" Reference quaternion is such that x is aligned with velocity 
+%and z is aligned as best as possible with the sun direction to maximize the power generation 
+% 3: "sun pointing" Reference quaternion is such that z is aligned with with 
+%the sun direction to maximize the power generation and x is aligned as best 
+%as possible with the velocity direction. 
+% 4: "aero-drag" Reference quaternion is similar than in Case 1, but rotated 
+%90° along the y axis, therefore, the reference quaternion is an attitude for 
+%maximizing the drag surface. 
+% 5: "retrogade firing" Reference quaternion is similar than in Case 1, but 
+%rotated 180° along the z axis, therefore, the reference quaternion is an 
+%attitude for retrograde propulsion. (??should be like case 2 but rotated?)
+% 6: Reference quaternion is static [1 0 0 0], but this time is the only case 
+%where the state of the B-dot is enabled (1). 
+% 7: Reference quaternion is a custom quaternion that has to be defined by the 
+%user as an input to the mission block. 
 
 %Initialisation of date
-year = 2019;
+year = 2024;
 month = 3;
 day = 21;
-hours = 5;
+hours = 0;
 minutes = 0;
 seconds = 0;
 
+
 %Simulation time parameters
-N_orbits = 2;
+N_orbits = 3;
 %Torbit=90*60;       %1 orbit approx. 90 minutes
 Torbit=2*pi*sqrt(a^3/(3.986004418E5));
 %tsimulation=60*45;   %in [s] 1 orbit
@@ -38,12 +62,20 @@ delta_t = 0.5; %simulation time step (seconds)
 % gii = -1450.9;
 % hii = 4652.5; 
 %%% GET PROPER IGRF COEFFICIENTS %%%
-date = [year,month,day];
-gh = loadigrfcoefsim(datenum(date));
-%Define order of the IGRF approximation
+% date = [year,month,day];
+% gh = loadigrfcoefsim(datenum(date));
+% %Define order of the IGRF approximation
+% nmax = 2;
+% %Earth Radius in meters used in IGRF 2020 model
+% R_earth = 6.3712e+6; 
+
+%IGRF
+%Determine the order of approximation for IGRF model of the earth's
+%magnetic field nmax (must be equal or less than 13)
 nmax = 2;
-%Earth Radius in meters used in IGRF 2020 model
-R_earth = 6.3712e+6; 
+%Determine whether you are using full IGRF model or dipole approximation
+%1 for true, 0 for false
+Use_IGRF = 0;
 
 
 %Extended Kalman Filter
@@ -83,7 +115,7 @@ PSDcss=sat.sensors.sun_coarse_sigma^2*Tss;
 Use_IGRF = 0; 
 %Define order of the IGRF approximation in the KF, only useful in dipole
 %approximation (Use_IGRF=0)
-nmaxKF = 2;
+nmaxKF = 2; 
 
 %Other Kalman Filter Parameters:
 %initial values
@@ -137,8 +169,10 @@ Vcss=sat.sensors.sun_coarse_sigma^2;
 Vcss=0.01745^2;
 %Vcss=(1e-1)^2;
 
-MEKFsimR2019a
-data=sim('MEKFsimR2019a');
+MEKFsim_v2R2019a
+%MEKFsim_v2
+data=sim('MEKFsim_v2R2019a');
+%data=sim('MEKFsim_v2');
 
 %% Run post-processing functions
 timesec = data.tout;

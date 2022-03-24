@@ -58,8 +58,10 @@ plot_volume(home_volume)
 drawnow
 
 %% rotate volume
-roll = (0:3:45) * pi/180;
-pitch = (0:5:180) * pi/180;
+%roll = (0:3:45) * pi/180;
+roll = (0:1:45) * pi/180;
+%pitch = (0:5:180) * pi/180;
+pitch = (0:1:180) * pi/180;
 yaw = 0 * pi/180;
 
 %added for IonSat

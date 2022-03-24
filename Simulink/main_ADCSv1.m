@@ -31,10 +31,15 @@ orbit.nu = 0;       %True anomaly [degrees]
 att.alpha = 40;     
 att.beta = -10;
 att.gamma = 60;
+att.alpha = 00;     
+att.beta = -10;
+att.gamma = 00;
+
+
 %Initial angular velocities in each axis (x,y,z) of body frame [degrees/sec]
-att.wx0 = -4;        
-att.wy0 = 6;
-att.wz0 = 2;
+att.wx0 = -0.01;        
+att.wy0 = 0.01;
+att.wz0 = 0.01;
 
 %POINTING MODE
 MODE = 2;   %"sun-aero" pointing mode
