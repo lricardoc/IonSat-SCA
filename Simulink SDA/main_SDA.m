@@ -36,13 +36,12 @@ MODE = 2;   %"sun-aero" pointing mode
 %user as an input to the mission block. 
 
 %Initialisation of date
-year = 2024;
-month = 3;
-day = 21;
-hours = 0;
-minutes = 0;
-seconds = 0;
-
+date.year = 2024;
+date.month = 3;
+date.day = 21;
+date.hours = 0;
+date.minutes = 0;
+date.seconds = 0;
 
 %Simulation time parameters
 N_orbits = 3;
@@ -54,28 +53,21 @@ tsimulation=N_orbits*Torbit;
 %tsimulation=2700;
 delta_t = 0.5; %simulation time step (seconds)
 
-%Magnetic Model parameters
-%Spherical harmonics of degree 1 according to the IGRF 2020 model
-%notation: gnm is the gaussian coefficient g with degree n and order m
-%gio is the coefficient g of degree 1 and order 0
-% gio = -29404.8;
-% gii = -1450.9;
-% hii = 4652.5; 
-%%% GET PROPER IGRF COEFFICIENTS %%%
-% date = [year,month,day];
-% gh = loadigrfcoefsim(datenum(date));
-% %Define order of the IGRF approximation
-% nmax = 2;
-% %Earth Radius in meters used in IGRF 2020 model
-% R_earth = 6.3712e+6; 
+%%% MAGNETIC FIELD MODELS - GET PROPER IGRF COEFFICIENTS %%%
+date_IGRF = [date.year,date.month,date.day];
+%"REAL" Magnetic Field
+%Determine whether you are using full IGRF model or dipole approximation
+%1 for full model, 0 for dipole approximation
+Use_IGRF = 0; 
 
-%IGRF
-%Determine the order of approximation for IGRF model of the earth's
-%magnetic field nmax (must be equal or less than 13)
 nmax = 2;
+
+%"EMBEDDED" Magnetic Field
 %Determine whether you are using full IGRF model or dipole approximation
 %1 for true, 0 for false
-Use_IGRF = 0;
+Use_IGRF_KF = 0; 
+%Determine the order of approximation for embedded IGRF model
+nmax_KF = 2;
 
 
 %Extended Kalman Filter
@@ -110,12 +102,6 @@ PSDfss=sat.sensors.sun_sigma^2*Tss;
 sat.sensors.sun_coarse_sigma=0.1745;
 PSDcss=sat.sensors.sun_coarse_sigma^2*Tss;
 
-%Determine whether you are using full IGRF model or dipole approximation
-%1 for true, 0 for false
-Use_IGRF = 0; 
-%Define order of the IGRF approximation in the KF, only useful in dipole
-%approximation (Use_IGRF=0)
-nmaxKF = 2; 
 
 %Other Kalman Filter Parameters:
 %initial values
@@ -169,8 +155,9 @@ Vcss=sat.sensors.sun_coarse_sigma^2;
 Vcss=0.01745^2;
 %Vcss=(1e-1)^2;
 
-MEKFsim_v2R2019a
-%MEKFsim_v2
+%% Simulation
+MEKFsim_v2R2019a         %MATLAB R2019a
+%MEKFsim_v2              %MATLAB R2020b
 data=sim('MEKFsim_v2R2019a');
 %data=sim('MEKFsim_v2');
 

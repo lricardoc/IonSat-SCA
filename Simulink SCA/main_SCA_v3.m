@@ -86,13 +86,15 @@ sat.mass = 12;      %Satellite Mass [kg]
 sat.CoG = [0;0;0];   %Satellite Center of Gravity [m]
 % Other blocks configuration
 
-%IGRF
+%%% GET PROPER IGRF COEFFICIENTS %%%
+date_IGRF = [date.year,date.month,date.day];
 %Determine the order of approximation for IGRF model of the earth's
 %magnetic field nmax (must be equal or less than 13)
 nmax = 2;
 %Determine whether you are using full IGRF model or dipole approximation
-%1 for true, 0 for false
+%1 for full model, 0 for dipole approximation
 Use_IGRF = 0; 
+
 
 %RWA
 % Calculate the pseudo inverse matrix
@@ -147,5 +149,6 @@ sat.thruster.duration=3000;         %duration of the thrust in [seconds]
 sat.thruster.wait=7000;             %waiting time between thrusts in [s]
 sat.thruster.firstimpulse=4000;     %first thrust after start sim in [s]
 %% Simulation
-Control_v3
+Control_v3                  %MATLAB R2020b
+%Control_v3R2019a            %MATLAB R2019a
 

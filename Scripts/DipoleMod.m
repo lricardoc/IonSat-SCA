@@ -1,4 +1,4 @@
-function B_ECEF = DipoleMod(h,lat,lon,nmax)
+function B_ECEF = DipoleMod(h,lat,lon,date,nmax)
 %Obtain B in ECEF coordinates from position in LLA coordinates
 %Uses dipole model with first order IGRF 2020 coefficients
 %Output will be measured in nT
@@ -8,7 +8,7 @@ function B_ECEF = DipoleMod(h,lat,lon,nmax)
 R_earth = 6.3712e+6; 
 
 %%% GET PROPER IGRF COEFFICIENTS %%%
-date = [2020,1,1];
+%date = [2020,1,1];
 gh = loadigrfcoefsim(datenum(date));
 
 theta = pi/2 - deg2rad(lat); %theta is the co-latitude in the model
