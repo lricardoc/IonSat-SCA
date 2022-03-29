@@ -27,3 +27,4 @@ for itheta=1:length(theta)
 end
 [Phi,Theta]=meshgrid(phi,theta);
 mesh(Phi*180/pi,Theta*180/pi,T)
+mesh(Phi*180/pi,Theta*180/pi,log10(T))

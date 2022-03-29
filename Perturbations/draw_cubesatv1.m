@@ -40,7 +40,7 @@ len = body_length / Resolution;  % length in dots = 30cm * Resolution
 %Modified MDQsat-1
 %wid = 5 / Resolution;  % width in dots = 10cm * Resolution
 %Modified IonSat
-wid = 23 / Resolution;  % width in dots = 22.63cm * Resolution (can only be integer)
+wid = 22 / Resolution;  % width in dots = 22.63cm * Resolution (can only be integer), before 23, now 22
 hei = 10 / Resolution;  % width in dots = 10cm * Resolution
 cg = round(size(volume)/2); % temporary cg - center of the volume
 
@@ -53,14 +53,15 @@ y_range = (cg-wid/2):(cg+wid/2);
 z_range = (cg-hei/2):(cg+hei/2);
 volume(x_range,y_range,z_range) = 1;
 
-x_range = 112:248;
-y_range = 60:300;
-z_range = 199;
+%Deployable Solar Panels 
+x_range = 112:248;  %180 +- 17cm(/0.25 which is resolution)
+y_range = 72:288;   %180 +- 27cm(/0.25 which is resolution)
+z_range = 199;      %180 + 5(/0.25 which is resolution) -1 
 volume(x_range,y_range,z_range) = 1;
 
+%Here we substract the points that are not a surface
 x_range = (cg-len/2)+1:(cg+len/2)-1;    %original MDQ
 y_range = (cg-wid/2)+1:(cg+wid/2)-1;    %original MDQ
-%z_range = (cg-wid/2)+2:(cg+wid/2)-2;    %original MDQ
 z_range = (cg-hei/2)+1:(cg+hei/2)-1; 
 volume(x_range,y_range,z_range) = NaN;
 
