@@ -3,7 +3,7 @@ close
 
 alt = 300;              %Altitude.....................(Km)							
 ecc = 0.001;            %Eccentricity											    
-inc =  51.6;            %Inclination..................(deg)		
+inc =  98;              %Inclination..................(deg)		
 RAAN = 30;              %Right Asc. of Ascending Node.(deg)	
 w = 25;                 %Argument of perigee..........(deg)	
 nu = 75;                %Satellite position...........(deg)							
@@ -23,8 +23,8 @@ t_sim = N_orbits*Torbit;
 
 %Initialisation of date
 date.year = 2022;
-date.month = 1;
-date.day = 1;
+date.month = 3;
+date.day = 21;
 date.hours = 0;
 date.minutes = 0;
 date.seconds = 0;
@@ -32,14 +32,27 @@ date.seconds = 0;
 %Load Satellite Constants
 load('SatConstants.mat')
 
+%%% MAGNETIC FIELD MODELS - GET PROPER IGRF COEFFICIENTS %%%
+date_IGRF = [date.year,date.month,date.day];
+%"REAL" Magnetic Field
+%Determine whether you are using full IGRF model or dipole approximation
+%1 for full model, 0 for dipole approximation
+Use_IGRF = 0; 
+nmax = 2;
+
+%%% Model of Perturbation Torques
+%Magnetic Torque Residual dipole
+sat.residual_dipole=[0.08;0.08;0.08]; %residual magnetic dipole in [A*m^2]
 %Aerodynamic Torque Constants
 %load('LOAS.mat')`
 load('IonSat_6U.mat');
 IonSataero.T = SNAP_aeromodel.T;
-IonSataero.pitch = SNAP_aeromodel.pitch;
-IonSataero.roll = SNAP_aeromodel.roll;
+IonSataero.El = SNAP_aeromodel.Az;
+IonSataero.Az = SNAP_aeromodel.El;
+IonSataero.Tx = SNAP_aeromodel.T_x;
+IonSataero.Ty = SNAP_aeromodel.T_y;
+IonSataero.Tz = SNAP_aeromodel.T_z;
 IonSataero.av_density_vs_alt = SNAP_aeromodel.av_density_vs_alt;
 IonSataero.alt_range = SNAP_aeromodel.alt_range;
 
-distmodel_v4
-
+distmodel_v5

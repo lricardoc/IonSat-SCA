@@ -45,7 +45,7 @@ function T = calc_torque_v1(volume, origin, Cd, resolution)
 %  V = 7669;
 %A_patch = 0.005*0.005; %This is the patch area 0.5cm x 0.5cm
 A_patch = (resolution/100)*(resolution/100); %This is the patch area 0.25cm x 0.25cm
-Uv = [-1 0 0];
+Uv = [-1 0 0];      %direction of the wind
 
 T = [0 0 0];
 
@@ -56,7 +56,8 @@ for y = 1:size(volume,2)
         w = find(volume(:,y,z) == 1);
         if ~isempty(w)
             %T = T + 0.5 * Cd * rho * V^2 * A * cross(Uv, ([w(1),y,z]-origin));
-            T = T + 0.5 * Cd * A_patch * cross(Uv, [w(1),y,z]-origin);
+            %T = T + 0.5 * Cd * A_patch * cross(Uv, [w(1),y,z]-origin);
+            T = T + 0.5 * Cd * A_patch * cross(Uv, (resolution/100)*([w(1),y,z]-origin));
 %             temp(y,z) = norm(0.5 * Cd * A * cross(Uv, [w(1),y,z]-origin));
         end
     end

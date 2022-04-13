@@ -106,29 +106,21 @@ Pinv_RW_repartition     %executes the following code lines:
 % sat.wheel.repartition_metrix_4RW_inverse = pinv(sat.wheel.repartition_matrix_4RW);
 
 %% Other disturbance block parameters
-%Satelite parasitic dipole residual
-RSD=[0.08,0.08,0.08];
-%about the new model Aero drag torque
-AX=0.022;
-AY=0.034;
-AZ=0.2108;
-OX=0.17;
-OY=0.11;
-OZ=0.05;
-Cdrag=2.6;
-%gravity center
-OGX=2.5*1e-4;
-OGY=-1*1e-3;
-OGZ=-2*1e-3;
-G=[OGX,OGY,OGZ];
-%about deployable_solar_plan
-CRS=[0,0.195,0.05];%%the_center_of_the_right_one.
-CLS=[0,-0.195,0.05];%%the_center_of_the_left_one.
-ESS=0.0578;%%surface_of_one
-AZES=0.1156;%surface_of_the_2
-%about_the_surface_facing Y
-Cmy=[0,-0.11,0];%the_center_of_the_one_facing_-Y.
-load('LOAS.mat')
+%%% Model of Perturbation Torques
+%Magnetic Torque Residual dipole
+sat.residual_dipole=[0.08;0.08;0.08]; %residual magnetic dipole in [A*m^2]
+%Aerodynamic Torque Constants
+%load('LOAS.mat')`
+load('IonSat_6U.mat');
+IonSataero.T = SNAP_aeromodel.T;
+IonSataero.El = SNAP_aeromodel.Az;
+IonSataero.Az = SNAP_aeromodel.El;
+IonSataero.Tx = SNAP_aeromodel.T_x;
+IonSataero.Ty = SNAP_aeromodel.T_y;
+IonSataero.Tz = SNAP_aeromodel.T_z;
+IonSataero.av_density_vs_alt = SNAP_aeromodel.av_density_vs_alt;
+IonSataero.alt_range = SNAP_aeromodel.alt_range;
+%load('LOAS.mat')
 
 %Thruster direction and activation:
 sat.thruster.force=0.00075; % Force of thruster in [N]
@@ -149,6 +141,6 @@ sat.thruster.duration=3000;         %duration of the thrust in [seconds]
 sat.thruster.wait=7000;             %waiting time between thrusts in [s]
 sat.thruster.firstimpulse=4000;     %first thrust after start sim in [s]
 %% Simulation
-Control_v3                  %MATLAB R2020b
+Control_v4                %MATLAB R2020b
 %Control_v3R2019a            %MATLAB R2019a
 

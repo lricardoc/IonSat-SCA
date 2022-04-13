@@ -34,7 +34,7 @@
 function [cg, volume] = draw_cubesatv1(body_length, cg_offset, volume, Resolution)
 
 volume = volume * NaN;
-len = body_length / Resolution;  % length in dots = 30cm * Resolution
+len = body_length / Resolution;  % length in dots = 34cm * Resolution
 %Original 3U
 %wid = 10 / Resolution;  % width in dots = 10cm * Resolution
 %Modified MDQsat-1
@@ -43,14 +43,14 @@ len = body_length / Resolution;  % length in dots = 30cm * Resolution
 wid = 22 / Resolution;  % width in dots = 22.63cm * Resolution (can only be integer), before 23, now 22
 hei = 10 / Resolution;  % width in dots = 10cm * Resolution
 cg = round(size(volume)/2); % temporary cg - center of the volume
+%cg = [180 180 180];
 
 
 
 %% main satellite body
-x_range = (cg-len/2):(cg+len/2);
-y_range = (cg-wid/2):(cg+wid/2);
-%z_range = (cg-wid/2):(cg+wid/2);    %original MDQ
-z_range = (cg-hei/2):(cg+hei/2);
+x_range = (cg-len/2):(cg+len/2); %112 to 248
+y_range = (cg-wid/2):(cg+wid/2); %136 to 224
+z_range = (cg-hei/2):(cg+hei/2); %160 to 200
 volume(x_range,y_range,z_range) = 1;
 
 %Deployable Solar Panels 
@@ -59,10 +59,17 @@ y_range = 72:288;   %180 +- 27cm(/0.25 which is resolution)
 z_range = 199;      %180 + 5(/0.25 which is resolution) -1 
 volume(x_range,y_range,z_range) = 1;
 
+% %Tail, just to test
+% x_range = 249:259;  %180 +- 17cm(/0.25 which is resolution)
+% y_range = 170:190;   %180 +- 27cm(/0.25 which is resolution)
+% z_range = 199;      %180 + 5(/0.25 which is resolution) -1 
+% volume(x_range,y_range,z_range) = 1;
+
+
 %Here we substract the points that are not a surface
-x_range = (cg-len/2)+1:(cg+len/2)-1;    %original MDQ
-y_range = (cg-wid/2)+1:(cg+wid/2)-1;    %original MDQ
-z_range = (cg-hei/2)+1:(cg+hei/2)-1; 
+x_range = (cg-len/2)+1:(cg+len/2)-1;    %113 to 247
+y_range = (cg-wid/2)+1:(cg+wid/2)-1;    %137 to 223
+z_range = (cg-hei/2)+1:(cg+hei/2)-1;    %161 to 199
 volume(x_range,y_range,z_range) = NaN;
 
 % Example, to add deployables, like antennae or booms:
@@ -81,9 +88,9 @@ volume(x_range,y_range,z_range) = NaN;
 
 %% CG Correction
 %% IMPORTANT:  Best to hardcode CG outside of this function, variable called "origin"
-[x y z] = find_1s_in_volume(volume);
-cg = round([sum(x)/length(x), sum(y)/length(y), sum(z)/length(z)]);  % assumes satellite is uniformly distributed
-cg(1) = cg(1) + cg_offset/Resolution;  
+% [x y z] = find_1s_in_volume(volume);
+% cg = round([sum(x)/length(x), sum(y)/length(y), sum(z)/length(z)]);  % assumes satellite is uniformly distributed
+% cg(1) = cg(1) + cg_offset/Resolution;  
 
 
         

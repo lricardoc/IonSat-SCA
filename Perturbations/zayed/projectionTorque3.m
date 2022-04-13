@@ -31,14 +31,16 @@ if pCz>-0.05
             N=100;%%%%%%%%%%%%%%%%%%%can be changed
             pas=ux/N;
             %integrale de rieman
-            for i=0:N-1
-                x=pBx+i*pas;
-                t=(x-A(1))/ux;
-                z=A(3)+t*uz;
-                %geometric center for dA
-                Gc=[x+(pas/2),pBy,(z-0.05)/2];
-                Rs=Gc-G;
-                torque= torque +cross(Rs,vorbit)*((z+0.05)*pas);
+            if pas ~=0
+                for i=0:N-1
+                    xr=pBx+i*pas;
+                    t=(xr-A(1))/ux;
+                    z=A(3)+t*uz;
+                    %geometric center for dA
+                    Gc=[xr+(pas/2),pBy,(z-0.05)/2];
+                    Rs=Gc-G;
+                    torque= torque +cross(Rs,vorbit)*((z+0.05)*abs(pas));
+                end
             end
             %the other surface
             Gc=[(pBx-0.17)/2,pBy,(pBz-0.05)/2];
@@ -48,15 +50,16 @@ if pCz>-0.05
             %%we calculate(la droite (ApB) coupe [segment]
             N=200;
             pas=0.34/N;
-            
-            for i=0:N-1
-                x=-0.17+i*pas;
-                t=(x-A(1))/ux;
-                z=A(3)+t*uz;
-                Gc=[x+(pas/2),pBy,(z-0.05)/2];
-                Rs=Gc-G;
-                torque= torque +cross(Rs,vorbit)*((z+0.05)*pas);
-                
+            if pas ~=0
+                for i=0:N-1
+                    xr=-0.17+i*pas;
+                    t=(xr-A(1))/ux;
+                    z=A(3)+t*uz;
+                    Gc=[xr+(pas/2),pBy,(z-0.05)/2];
+                    Rs=Gc-G;
+                    torque= torque +cross(Rs,vorbit)*((z+0.05)*abs(pas));
+
+                end
             end
             
             
@@ -70,16 +73,17 @@ if pCz>-0.05
         uz=D(3)-pCz;
         N=100;
         pas=ux/N;%negative always
-       
-        for i=0:N-1
-            x=pCx+i*pas;
-            t=(x-D(1))/ux;
-            z=D(3)+t*uz;
-            %geometric center for dA
-            Gc=[x+(pas/2),pCy,(z-0.05)/2];
-            Rs=Gc-G;
-            torque= torque +cross(Rs,vorbit)*((z+0.05)*pas);
-            
+        if pas ~=0
+            for i=0:N-1
+                xr=pCx+i*pas;
+                t=(xr-D(1))/ux;
+                z=D(3)+t*uz;
+                %geometric center for dA
+                Gc=[xr+(pas/2),pCy,(z-0.05)/2];
+                Rs=Gc-G;
+                torque= torque +cross(Rs,vorbit)*((z+0.05)*abs(pas));
+
+            end
         end
         Gc=[(pCx+0.17)/2,pCy,(pCz-0.05)/2];
         Rs=Gc-G;
@@ -91,15 +95,16 @@ if pCz>-0.05
         %we calculate(coupe droite segment)
         N=200;
         pas=-0.34/N;
-     
-        for i=0:N-1
-            x=0.17+i*pas;
-            t=(x-D(1))/ux;
-            z=D(3)+t*uz;
-            Gc=[x+(pas/2),pCy,(z-0.05)/2];
-            Rs=Gc-G;
-            torque= torque +cross(Rs,vorbit)*((z+0.05)*pas);
-            
+        if pas ~=0
+            for i=0:N-1
+                xr=0.17+i*pas;
+                t=(xr-D(1))/ux;
+                z=D(3)+t*uz;
+                Gc=[xr+(pas/2),pCy,(z-0.05)/2];
+                Rs=Gc-G;
+                torque= torque +cross(Rs,vorbit)*((z+0.05)*abs(pas));
+
+            end
         end
         
     end
@@ -121,15 +126,16 @@ else
             N=200;%%%%%%%%%%%%%%%%%%%can be changed
             pas=0.34/N;
             %integrale de rieman
-            
-            for i=0:N-1
-                x=-0.17+i*pas;%%%intersection DDprim
-                t=(x-A(1))/ux;
-                z=A(3)+t*uz;
-                %geometric center for dA
-                Gc=[x+(pas/2),pBy,(z-0.05)/2];
-                Rs=Gc-G;
-                torque= torque +cross(Rs,vorbit)*((z+0.05)*pas);
+            if pas ~=0
+                for i=0:N-1
+                    xr=-0.17+i*pas;%%%intersection DDprim
+                    t=(xr-A(1))/ux;
+                    z=A(3)+t*uz;
+                    %geomretric center for dA
+                    Gc=[xr+(pas/2),pBy,(z-0.05)/2];
+                    Rs=Gc-G;
+                    torque= torque +cross(Rs,vorbit)*((z+0.05)*abs(pas));
+                end
             end
             
         else
@@ -139,15 +145,16 @@ else
             N=100;%%%%%%%%%%%%%%%%%%%can be changed
             pas=(0.17-x)/N;
             %integrale de rieman
-          
-            for i=0:N-1
-                x=x+i*pas;
-                t=(x-A(1))/ux;
-                z=A(3)+t*uz;
-                %geometric center for dA
-                Gc=[x+(pas/2),pBy,(z-0.05)/2];
-                Rs=Gc-G;
-                torque= torque +cross(Rs,vorbit)*((z+0.05)*pas);
+            if pas ~=0
+                for i=0:N-1
+                    xr=x+i*pas;
+                    t=(xr-A(1))/ux;
+                    z=A(3)+t*uz;
+                    %geometric center for dA
+                    Gc=[xr+(pas/2),pBy,(z-0.05)/2];
+                    Rs=Gc-G;
+                    torque= torque +cross(Rs,vorbit)*((z+0.05)*abs(pas));
+                end
             end
             
             
@@ -170,15 +177,16 @@ else
             N=200;%%%%%%%%%%%%%%%%%%%can be changed
             pas=-0.34/N;
             %integrale de rieman
-            
-            for i=0:N-1
-                x=0.17+i*pas;
-                t=(x-D(1))/ux;
-                z=D(3)+t*uz;
-                %geometric center for dA
-                Gc=[x+(pas/2),pCy,(z-0.05)/2];
-                Rs=Gc-G;
-                torque= torque +cross(Rs,vorbit)*((z+0.05)*pas);
+            if pas ~=0
+                for i=0:N-1
+                    xr=0.17+i*pas;
+                    t=(xr-D(1))/ux;
+                    z=D(3)+t*uz;
+                    %geometric center for dA
+                    Gc=[xr+(pas/2),pCy,(z-0.05)/2];
+                    Rs=Gc-G;
+                    torque= torque +cross(Rs,vorbit)*((z+0.05)*abs(pas));
+                end
             end
             
         else
@@ -188,15 +196,16 @@ else
             N=100;%%%%%%%%%%%%%%%%%%%can be changed
             pas=(-0.17-x)/N;
             %integrale de rieman
-           
-            for i=0:N-1
-                x=x+i*pas;
-                t=(x-D(1))/ux;
-                z=D(3)+t*uz;
-                %geometric center for dA
-                Gc=[x+(pas/2),pBy,(z-0.05)/2];
-                Rs=Gc-G;
-                torque= torque +cross(Rs,vorbit)*((z+0.05)*pas);
+            if pas ~=0
+                for i=0:N-1
+                    xr=x+i*pas;
+                    t=(xr-D(1))/ux;
+                    z=D(3)+t*uz;
+                    %geometric center for dA
+                    Gc=[xr+(pas/2),pBy,(z-0.05)/2];
+                    Rs=Gc-G;
+                    torque= torque +cross(Rs,vorbit)*((z+0.05)*abs(pas));
+                end
             end
             
             
