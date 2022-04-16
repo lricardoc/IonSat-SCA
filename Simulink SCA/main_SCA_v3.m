@@ -15,7 +15,7 @@ orbit.nu = 0;       %True anomaly [degrees]
 %i = 98: notice that for the date 21/3 (equinox) the RAAN (O) is close to the beta angle.
 
 %POINTING MODE
-MODE = 2;   %"sun-aero" pointing mode
+MODE = 4;   %"sun-aero" pointing mode
 % 1: "orbital" Reference quaternion is aligned with ORF. 
 % 2: "sun-aero" Reference quaternion is such that x is aligned with velocity 
 %and z is aligned as best as possible with the sun direction to maximize the power generation 
@@ -49,14 +49,14 @@ MODE = 2;   %"sun-aero" pointing mode
 % att.wz0 = 3;
 
 %to test other errors
-att.alpha = 10;     
-att.beta = -20;
-att.gamma = 30;
+att.alpha = 50;         %Initial orientation Yaw [deg]
+att.beta = 20;         %Initial orientation Pitch [deg]
+att.gamma = 160;         %Initial orientation Roll [deg]
 %Initial angular velocities in each axis (x,y,z) of body frame [degrees/sec]
-att.wx0 = -1;        
-att.wy0 = 1;
-att.wz0 = 1;
-%works: 10, -20, 30 and -1, 1, 1.
+att.wx0 = -0.1;        
+att.wy0 = 0.1;
+att.wz0 = 0.1;
+%works: 10, -20, 30 and -1, 1, 1. mode 2, not 4
 
 %time
 TimeStep = 1;        %fixed-step size in solver, Default time step=0.25
@@ -83,7 +83,7 @@ sat.inertia = [0.06   0   0;...
                 0   0.09  0;...
                 0     0   0.14];
 sat.mass = 12;      %Satellite Mass [kg]
-sat.CoG = [0;0;0];   %Satellite Center of Gravity [m]
+sat.CoG = [0;3.81;8.23]/1000;   %Satellite Center of Gravity [m] in the BRF 
 % Other blocks configuration
 
 %%% GET PROPER IGRF COEFFICIENTS %%%
@@ -120,7 +120,6 @@ IonSataero.Ty = SNAP_aeromodel.T_y;
 IonSataero.Tz = SNAP_aeromodel.T_z;
 IonSataero.av_density_vs_alt = SNAP_aeromodel.av_density_vs_alt;
 IonSataero.alt_range = SNAP_aeromodel.alt_range;
-%load('LOAS.mat')
 
 %Thruster direction and activation:
 sat.thruster.force=0.00075; % Force of thruster in [N]
@@ -132,11 +131,11 @@ alpha=80*pi/180;       %rotation of deviation around x axis
 sat.thruster.dir=R*[cos(d);sin(d);0];   %Direction of thrust (unit vector)
 %Thruster applied point in BRF:
 x_force_thruster=171;       %Distance from the geometric center x axis in [mm]
-y_force_thruster=3.81;      %Distance from the geometric center y axis in [mm]
-z_force_thruster=8.23;      %Distance from the geometric center z axis in [mm]
+y_force_thruster=0;      %Distance from the geometric center y axis in [mm]
+z_force_thruster=0;      %Distance from the geometric center z axis in [mm]
 sat.thruster.point=[x_force_thruster;y_force_thruster;z_force_thruster]/1e3;    
-                            %Distance from the geometric center in [m]
-%other parameters
+                            %Distance from the geometric center (BRF) in [m]
+%other parameters for thruster firing
 sat.thruster.duration=3000;         %duration of the thrust in [seconds]
 sat.thruster.wait=7000;             %waiting time between thrusts in [s]
 sat.thruster.firstimpulse=4000;     %first thrust after start sim in [s]

@@ -54,5 +54,12 @@ IonSataero.Ty = SNAP_aeromodel.T_y;
 IonSataero.Tz = SNAP_aeromodel.T_z;
 IonSataero.av_density_vs_alt = SNAP_aeromodel.av_density_vs_alt;
 IonSataero.alt_range = SNAP_aeromodel.alt_range;
+%Solar radiation pressure torque
+F_s = 1367;     %solar constant in [W/m^2]
+c = 299792458;  %light speed in [m/s]
+q = 0.6;        %reflectance factor 
+%q = (400/((alt+6378)/6378)^2)/F_s;        %reflectance factor 
+Cd = 2.4;
+
 
 distmodel_v5
