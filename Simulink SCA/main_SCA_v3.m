@@ -15,7 +15,7 @@ orbit.nu = 0;       %True anomaly [degrees]
 %i = 98: notice that for the date 21/3 (equinox) the RAAN (O) is close to the beta angle.
 
 %POINTING MODE
-MODE = 4;   %"sun-aero" pointing mode
+MODE = 2;   %"sun-aero" pointing mode
 % 1: "orbital" Reference quaternion is aligned with ORF. 
 % 2: "sun-aero" Reference quaternion is such that x is aligned with velocity 
 %and z is aligned as best as possible with the sun direction to maximize the power generation 
@@ -78,12 +78,12 @@ date.seconds = 0;
 
 %% Load other parameters
 load('SatConstants.mat')
-load('workspace.mat')
-sat.inertia = [0.06   0   0;...
+%load('workspace.mat') %for 2021 simulation
+sat.inertia = [0.06   0   0;...   %already saved
                 0   0.09  0;...
                 0     0   0.14];
 sat.mass = 12;      %Satellite Mass [kg]
-sat.CoG = [0;3.81;8.23]/1000;   %Satellite Center of Gravity [m] in the BRF 
+sat.CoG = [0;5.1;4.2]/1000;   %Satellite Center of Gravity [m] in the BRF 
 % Other blocks configuration
 
 %%% GET PROPER IGRF COEFFICIENTS %%%
@@ -130,7 +130,7 @@ alpha=80*pi/180;       %rotation of deviation around x axis
         0    sin(alpha)   cos(alpha)];
 sat.thruster.dir=R*[cos(d);sin(d);0];   %Direction of thrust (unit vector)
 %Thruster applied point in BRF:
-x_force_thruster=171;       %Distance from the geometric center x axis in [mm]
+x_force_thruster=182.95;       %Distance from the geometric center x axis in [mm]
 y_force_thruster=0;      %Distance from the geometric center y axis in [mm]
 z_force_thruster=0;      %Distance from the geometric center z axis in [mm]
 sat.thruster.point=[x_force_thruster;y_force_thruster;z_force_thruster]/1e3;    
@@ -140,6 +140,7 @@ sat.thruster.duration=3000;         %duration of the thrust in [seconds]
 sat.thruster.wait=7000;             %waiting time between thrusts in [s]
 sat.thruster.firstimpulse=4000;     %first thrust after start sim in [s]
 %% Simulation
-Control_v4                %MATLAB R2020b
-%Control_v3R2019a            %MATLAB R2019a
+%Control_v3R2019a           %MATLAB R2019a
+%Control_v4                 %MATLAB R2020b
+Control_v4_desat0           %MATLAB R2020b
 

@@ -87,3 +87,4 @@ xlabel('Azimuth')
 ylabel('Elevation')
 zlabel('Torque max. [mNm]')
 title(['Torque Envelope for IonSat RWA'])
+colorbar
