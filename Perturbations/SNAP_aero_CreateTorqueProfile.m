@@ -113,6 +113,7 @@ SNAP_aeromodel.av_density_vs_alt = [2.53e-10 6.24e-11 1.95e-11 6.98e-12 2.72e-12
 SNAP_aeromodel.up_density_vs_alt = [3.52e-10 1.06e-10 3.96e-11 1.66e-11 7.55e-12 3.61e-12 1.8e-12 9.25e-13 4.89e-13 2.64e-13 1.47e-13 ]; %% averages, Kg/m3
 
 save('IonSat_6U','SNAP_aeromodel')
+%load('IonSat_6U','SNAP_aeromodel') %to plot
 %end of script
 
 %the following is just to plot, to have an idea of the value of the torque
@@ -123,6 +124,7 @@ dens=1.95e-11;  %atmosphere density at 300km av
 %mesh(SNAP_aeromodel.roll*180/pi, SNAP_aeromodel.pitch*180/pi, SNAP_aeromodel.T)
 figure()
 mesh(SNAP_aeromodel.Az*180/pi, SNAP_aeromodel.El*180/pi, SNAP_aeromodel.T*(dens*vel^2))
+set(gcf,'color','w');
             %set(gca,'XTick',[0:30:90]);
             %set(gca,'YTick',[0:30:180]);
             title('Aerodynamic torque profile')
