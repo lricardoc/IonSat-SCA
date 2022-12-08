@@ -141,6 +141,6 @@ sat.thruster.wait=7000;             %waiting time between thrusts in [s]
 sat.thruster.firstimpulse=4000;     %first thrust after start sim in [s]
 %% Simulation
 %Control_v3R2019a           %MATLAB R2019a
-%Control_v4                 %MATLAB R2020b
+%Control_v4                 %MATLAB R2020b, latest one working fine
 Control_v4_desat0           %MATLAB R2020b
 
