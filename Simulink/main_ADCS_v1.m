@@ -175,6 +175,8 @@ sat.thruster.point=[x_force_thruster;y_force_thruster;z_force_thruster]/1e3;
 sat.thruster.duration=3000;         %duration of the thrust in [seconds]
 sat.thruster.wait=7000;             %waiting time between thrusts in [s]
 sat.thruster.firstimpulse=4000;     %first thrust after start sim in [s]
+                                    %needs to be less than waiting time
+sat.thruster.Nfirings=3;            %number of thrust firings
 
 %% Open the simulink model
 IonSatSimulationD
