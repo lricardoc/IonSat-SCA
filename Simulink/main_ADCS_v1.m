@@ -26,6 +26,9 @@ orbit.O = 146;      %Right ascension of the right ascending node [degrees] %max 
 orbit.o = 344;      %Argument of the perigee [degrees]                      %max 90, min 0      %90
 orbit.nu = 0;       %True anomaly [degrees]
 
+%initialize
+%Initial_XYZ_VxVyVz = Kepler2Carts([orbit.a; orbit.e; deg2rad(orbit.i); deg2rad(orbit.O); deg2rad(orbit.o); deg2rad(orbit.nu)]);
+
 %Attitude: Initialisation of angles and rotational speeds:
 %Initial orientation in ZYX (alpha,beta,gamma) Euler angles [degrees]
 att.alpha = 40;     
@@ -179,10 +182,10 @@ sat.thruster.firstimpulse=4000;     %first thrust after start sim in [s]
 sat.thruster.Nfirings=3;            %number of thrust firings
 
 %% Open the simulink model
-IonSatSimulationD
+IonSatSimulationE
 
 %% Load the simulink model
-load_system("IonSatSimulationD.slx")
+load_system("IonSatSimulationE.slx")
 
 %% Run the simulink 
-simOut = sim("IonSatSimulationD");
+simOut = sim("IonSatSimulationE");

@@ -143,6 +143,6 @@ sat.thruster.firstimpulse=4000;     %first thrust after start sim in [s]
 sat.thruster.Nfirings=3;            %number of thrust firings
 %% Simulation
 %Control_v3R2019a           %MATLAB R2019a
-Control_v4                 %MATLAB R2020b, latest one working fine
+Control_v6                 %MATLAB R2020b, latest one working fine
 %Control_v4_desat0           %MATLAB R2020b
 
