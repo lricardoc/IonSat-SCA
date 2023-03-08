@@ -1,4 +1,4 @@
-%CIC writer modified IonSat team X20
+%CIC writer modified IonSat team X20 to use with Control_v6.slx (ACS)
 disp('Opening out file');
 
 data.pos = out.sat_pos.data/1000.0;
@@ -6,7 +6,8 @@ data.speed = out.sat_speed.data/1000.0;
 %in km and km/s
 
 data.quaternions = out.sat_Q.data;
-data.quaternions_ref = out.sat_Qref.data;
+%data.quaternions_ref = out.sat_Qref.data;
+data.quaternions_ref = out.sat_Qc.data;
 
 %On récupère les données de temps
 data.time = num2cell(datetime(out.T_JD.data,'convertfrom','juliandate','Format','yyyy-MM-dd''T''HH:mm:ss'));

@@ -83,7 +83,9 @@ sat.inertia = [0.06   0   0;...   %already saved
                 0   0.09  0;...
                 0     0   0.14];
 sat.mass = 12;      %Satellite Mass [kg]
-sat.CoG = [0;5.1;4.2]/1000;   %Satellite Center of Gravity [m] in the BRF 
+sat.CoG = [0;5.1;-4.2]/1000;   %Satellite Center of Gravity [m] in the BRF
+%Needs to agree with the CoG calculated in the aerodynamic torque.
+
 % Other blocks configuration
 
 %%% GET PROPER IGRF COEFFICIENTS %%%
@@ -124,7 +126,7 @@ IonSataero.alt_range = SNAP_aeromodel.alt_range;
 %Thruster direction and activation:
 sat.thruster.force=0.00075; % Force of thruster in [N]
 d=1*pi/180;           %deviation in rads of the thruster wrt to x axis in plane XY
-alpha=80*pi/180;       %rotation of deviation around x axis
+alpha=80*pi/180;       %rotation of thrust deviation around x axis
     R=[ 1    0            0;...
         0    cos(alpha)  -sin(alpha);...
         0    sin(alpha)   cos(alpha)];
@@ -133,8 +135,9 @@ sat.thruster.dir=R*[cos(d);sin(d);0];   %Direction of thrust (unit vector)
 x_force_thruster=182.95;       %Distance from the geometric center x axis in [mm]
 y_force_thruster=0;      %Distance from the geometric center y axis in [mm]
 z_force_thruster=0;      %Distance from the geometric center z axis in [mm]
-sat.thruster.point=[x_force_thruster;y_force_thruster;z_force_thruster]/1e3;    
+sat.thruster.point=[-x_force_thruster;y_force_thruster;z_force_thruster]/1e3;    
                             %Distance from the geometric center (BRF) in [m]
+                            %Thruster located in "back side" of S/C (-X)
 %other parameters for thruster firing
 sat.thruster.duration=3000;         %duration of the thrust in [seconds]
 sat.thruster.wait=7000;             %waiting time between thrusts in [s]

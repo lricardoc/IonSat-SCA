@@ -32,15 +32,12 @@
 % ----------------------------------------------------------------------------
 
 clear
-%addpath('libaero') %already added in MATLAB installation of SNAP
-
-
-%% Define "home" volume
-Resolution = 0.25; % 0.25cm cube per dot [cm]
+% Define "home" volume
+Resolution = 0.25; % 0.25cm cube per dot
 res = 360;  %home volume dimensions (resolution)
 home_volume = zeros(res,res,res) * NaN;
 
-%% Define satellite Shape
+% Define satellite Shape
 %%Original 3U
 %[origin, home_volume] = draw_cubesat(30, 0, home_volume, Resolution); 
 %Modified IonSat
@@ -48,20 +45,11 @@ home_volume = zeros(res,res,res) * NaN;
 %width in dots = 23cm  (these two things have to be modified inside the
 %function drawcubesatv1)
 %heigth in dots = 10cm (modified inside)
-length_body = 36; %in cm, dimension of CubeSat in x axis (BRF)
-width_body = 23; %in cm, dimension of CubeSat in y axis (BRF)
-heigth_body = 10; %in cm, dimension of CubeSat in z axis (BRF)
-%length/resolution can only be an even integer; same applies widht, height.
-[origin, home_volume] = draw_cubesatv1(length_body, width_body, heigth_body, 0, home_volume, Resolution); 
+[origin, home_volume] = draw_cubesat_alt(37, 0, home_volume, Resolution); 
 %origin  = [res res res]/2;  % overwrite, numerical rounding caused odd results.
 %origin is an output of the function draw_cubesat should be [180 180 180]
-%origin represents the geometric center of the body.
 %This is the CoG:
-%CoGmeters = [0;5.1;-4.2]/1000; %CoG in meters (see ADCS simulation code)
-%CoG=origin+(round(CoGmeters/(Resolution/100)))'; calculate automatically
-CoG  = [181 182 178];  % overwrite, numerical rounding caused odd results.
-%note that the origin (geometric center) is [180 180 180], so 1 unit is 0.25cm away from that
-%[181 178 182] = [+0.25 +0.5 -0.5]cm location of CoG in BRF [cm].
+CoG  = [181 179 182];  % overwrite, numerical rounding caused odd results.
 
 SNAP_aeromodel.PointCloudModel = home_volume;
 
@@ -76,7 +64,7 @@ Elevation = (-90:3:90) * pi/180;
 Azimuth = (0:3:360) * pi/180;
 
 %added for IonSat
-Cd = 2.6;
+Cd = 2.4;
 
 T = zeros(length(Azimuth),length(Elevation));
 for iEle = 1:length(Elevation)
@@ -90,7 +78,7 @@ for iEle = 1:length(Elevation)
         
         % Torque in body frame
         %temp = calc_torque_v1(rot_volume, origin, Cd, Resolution); %before 
-        temp = calc_torque_v1(rot_volume, CoG, Cd, Resolution); %after
+        temp = calc_torque_alt(rot_volume, CoG, Cd, Resolution); %after
         
         T(iAzi, iEle) =  sqrt(temp(1)^2+temp(2)^2+temp(3)^2);
         DCM_El1 = angle2dcm( 0, -Elevation(iEle), 0, 'XYZ');
@@ -109,32 +97,32 @@ for iEle = 1:length(Elevation)
 end
 %T(T<1e-8) = 0;
 
-SNAP_aeromodel.T = [T']; %this transpose is because of the simulink where we will use the table
-SNAP_aeromodel.T_x = T_b_x';
-SNAP_aeromodel.T_y = T_b_y';
-SNAP_aeromodel.T_z = T_b_z';
+SNAP_aeromodel_alt.T = [T']; %this transpose is because of the simulink
+SNAP_aeromodel_alt.T_x = T_b_x';
+SNAP_aeromodel_alt.T_y = T_b_y';
+SNAP_aeromodel_alt.T_z = T_b_z';
 
-SNAP_aeromodel.Az = Azimuth;
-SNAP_aeromodel.El = Elevation;                            
-SNAP_aeromodel.alt_range = (200:50:700); % km, altitudes
-SNAP_aeromodel.lo_density_vs_alt = [1.78e-10 3.35e-11 8.19e-12 2.34e-12 7.32e-13 2.47e-13 8.98e-14 3.63e-14 1.68e-14 9.14e-15 5.74e-15]; %% averages, Kg/m3
-SNAP_aeromodel.av_density_vs_alt = [2.53e-10 6.24e-11 1.95e-11 6.98e-12 2.72e-12 1.13e-12 4.89e-13 2.21e-13 1.04e-13 5.15e-14 2.71e-14]; %% averages, Kg/m3
-SNAP_aeromodel.up_density_vs_alt = [3.52e-10 1.06e-10 3.96e-11 1.66e-11 7.55e-12 3.61e-12 1.8e-12 9.25e-13 4.89e-13 2.64e-13 1.47e-13 ]; %% averages, Kg/m3
+SNAP_aeromodel_alt.Az = Azimuth;
+SNAP_aeromodel_alt.El = Elevation;                            
+SNAP_aeromodel_alt.alt_range = (200:50:700); % km, altitudes
+SNAP_aeromodel_alt.lo_density_vs_alt = [1.78e-10 3.35e-11 8.19e-12 2.34e-12 7.32e-13 2.47e-13 8.98e-14 3.63e-14 1.68e-14 9.14e-15 5.74e-15]; %% averages, Kg/m3
+SNAP_aeromodel_alt.av_density_vs_alt = [2.53e-10 6.24e-11 1.95e-11 6.98e-12 2.72e-12 1.13e-12 4.89e-13 2.21e-13 1.04e-13 5.15e-14 2.71e-14]; %% averages, Kg/m3
+SNAP_aeromodel_alt.up_density_vs_alt = [3.52e-10 1.06e-10 3.96e-11 1.66e-11 7.55e-12 3.61e-12 1.8e-12 9.25e-13 4.89e-13 2.64e-13 1.47e-13 ]; %% averages, Kg/m3
 
-save('IonSat_6U','SNAP_aeromodel')
+save('IonSat_6U_alt','SNAP_aeromodel_alt')
 %load('IonSat_6U','SNAP_aeromodel') %to plot
 %end of script
 
 %% Plot Aerodynamic torque
 %the following is just to plot, to have an idea of the value of the torque
-load('IonSat_6U');
+load('IonSat_6U_alt');
 vel=7725.84; %circular orbital velocity at 300km
-%dens=8.19e-12;  %atmosphere density at 300km low density
-dens=1.95e-11;  %atmosphere density at 300km average density
+%dens=8.19e-12;  %atmosphere density at 300km low
+dens=1.95e-11;  %atmosphere density at 300km av
 
 %mesh(SNAP_aeromodel.roll*180/pi, SNAP_aeromodel.pitch*180/pi, SNAP_aeromodel.T)
 figure()
-mesh(SNAP_aeromodel.Az*180/pi, SNAP_aeromodel.El*180/pi, SNAP_aeromodel.T*(dens*vel^2))
+mesh(SNAP_aeromodel_alt.Az*180/pi, SNAP_aeromodel_alt.El*180/pi, SNAP_aeromodel_alt.T*(dens*vel^2))
 set(gcf,'color','w');
             %set(gca,'XTick',[0:30:90]);
             %set(gca,'YTick',[0:30:180]);

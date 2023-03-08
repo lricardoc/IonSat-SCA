@@ -31,7 +31,7 @@
 %  
 % ----------------------------------------------------------------------------
 
-function [cg, volume] = draw_cubesatv1(body_length, body_width, body_height, cg_offset, volume, Resolution)
+function [cg, volume] = draw_cubesatv1(body_length, cg_offset, volume, Resolution)
 
 volume = volume * NaN;
 len = body_length / Resolution;  % length in dots = 34cm * Resolution
@@ -40,10 +40,10 @@ len = body_length / Resolution;  % length in dots = 34cm * Resolution
 %Modified MDQsat-1
 %wid = 5 / Resolution;  % width in dots = 10cm * Resolution
 %Modified IonSat
-wid = body_width / Resolution;  % width in dots = 22.63cm / Resolution (can only be integer), before 23, now 22
-hei = body_height / Resolution;  % width in dots = 10cm / Resolution
+wid = 10 / Resolution;  % width in dots = 22.63cm * Resolution (can only be integer), before 23, now 22
+hei = 23 / Resolution;  % width in dots = 10cm * Resolution
 cg = round(size(volume)/2); % temporary cg - center of the volume
-%cg = [180 180 180]; %it is the geometric center
+%cg = [180 180 180];
 
 
 
@@ -54,9 +54,12 @@ z_range = (cg-hei/2):(cg+hei/2); %160 to 200
 volume(x_range,y_range,z_range) = 1;
 
 %Deployable Solar Panels 
-x_range = 112:248;  %180 +- 68 (17cm/0.25 which is resolution)
-y_range = 72:288;   %180 +- 108 (27cm/0.25 which is resolution)
-z_range = 199;      %180 + 10 (5/0.25 which is resolution) -1 
+%x_range = 112:248;  %180 +- 17cm(/0.25 which is resolution)
+x_range = 106:254;  %180 +- 74 (18.5cm/0.25 which is resolution)
+%y_range = 30:330;   %180 +- 150(37.5cm/0.25 which is resolution)
+y_range = 30:330;   %180 +- 150(37.5cm/0.25 which is resolution)
+%z_range = 199;      %180 + 5/0.25 which is resolution) -1 
+z_range = 225;      %180 + 46(23/2/0.25 which is resolution) -1 
 volume(x_range,y_range,z_range) = 1;
 
 % %Tail, just to test
@@ -72,11 +75,6 @@ y_range = (cg-wid/2)+1:(cg+wid/2)-1;    %137 to 223
 z_range = (cg-hei/2)+1:(cg+hei/2)-1;    %161 to 199
 volume(x_range,y_range,z_range) = NaN;
 
-% Example, to add deployables, like antennae or booms:
-% x_range = 200:220;
-% y_range = 189:190;
-% z_range = 189;
-% volume(x_range,y_range,z_range) = 1
 
 %% CG Correction
 %% IMPORTANT:  Best to hardcode CG outside of this function, variable called "origin"
