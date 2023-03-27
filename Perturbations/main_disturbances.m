@@ -62,4 +62,4 @@ q = 0.6;        %reflectance factor
 Cd = 2.4;
 
 
-distmodel_v5
+distmodel_v5_2020b
