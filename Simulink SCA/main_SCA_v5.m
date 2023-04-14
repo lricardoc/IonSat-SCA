@@ -33,14 +33,14 @@ orbit.sun_ECI_0 = (planetEphemeris(juliandate(date.year,date.month,date.day),'Ea
 orbit.sun_ECI_0 = orbit.sun_ECI_0/norm (orbit.sun_ECI_0);   %get unit vector
 
 %POINTING MODE
-MODE = 1;   %"sun-aero" pointing mode
+MODE = 2;   %"sun-aero" pointing mode
 % 1: "orbital" Reference quaternion is aligned with ORF. 
 % 2: "sun-aero" Reference quaternion is such that x is aligned with velocity 
 %and z is aligned as best as possible with the sun direction to maximize the power generation 
 % 3: "sun pointing" Reference quaternion is such that z is aligned with with 
 %the sun direction to maximize the power generation and x is aligned as best 
 %as possible with the velocity direction.
-% 4: "aero-drag" Reference quaternion is similar than in Case 1, but rotated 
+% 4: "aero-drag" Reference quaternion is similar than in Case 2, but rotated 
 %90° along the y axis, therefore, the reference quaternion is an attitude for 
 %maximizing the drag surface. 
 % 5: "retrogade firing" Reference quaternion is similar than in Case 1, but 
@@ -50,29 +50,79 @@ MODE = 1;   %"sun-aero" pointing mode
 %where the state of the B-dot is enabled (1). 
 % 7: Reference quaternion is a custom quaternion that has to be defined by the 
 %user as an input to the mission block. 
-% 7: "sun-drag" Reference quaternion is such that z is aligned with 
+% 8: "sun-drag" Reference quaternion is such that z is aligned with 
 %the velocity direction to maximize the drag and x is aligned as best 
 %as possible with the velocity direction. 
 
 
-if MODE==1
-    x_sa=orbit.v/norm(orbit.v);
-    z_sa=orbit.r/norm(orbit.r);
-    y_sa=-cross(x_sa,z_sa);
-    DCM_orb=horzcat(x_sa,y_sa,z_sa);
+if MODE == 1
+    x_sa = orbit.v/norm(orbit.v);
+    z_sa = orbit.r/norm(orbit.r);
+    y_sa = -cross(x_sa,z_sa);
+    DCM_orb = horzcat(x_sa,y_sa,z_sa);
     q_s2o = dcm2quat(DCM_orb);
     att.q_i2r = (quatinv (q_s2o))';
 end
 
-if MODE==2
-    x_sa=orbit.v/norm(orbit.v);
-    z_sa=orbit.sun_ECI_0-dot(orbit.sun_ECI_0,x_sa)*x_sa;
-    z_sa=z_sa/norm(z_sa);
-    y_sa=cross(z_sa,x_sa);
+if MODE == 2
+    x_sa = orbit.v/norm(orbit.v);
+    z_sa = orbit.sun_ECI_0 - dot(x_sa,orbit.sun_ECI_0)*x_sa;
+    z_sa = z_sa/norm(z_sa);
+    y_sa = cross(z_sa,x_sa);
+    DCM_sa = horzcat(x_sa,y_sa,z_sa);
+    q_s2i = dcm2quat(DCM_sa);
+    att.q_i2r = (quatinv(q_s2i))';
+end
+
+if MODE == 3
+    z_sa = orbit.sun_ECI_0/norm(orbit.sun_ECI_0);
+    x_sa = dot(orbit.v,z_sa)*z_sa - orbit.v;
+    x_sa = x_sa/norm(x_sa);
+    y_sa = cross(z_sa,x_sa);
     DCM_sa=horzcat(x_sa,y_sa,z_sa);
     q_s2i = dcm2quat(DCM_sa);
     att.q_i2r = (quatinv (q_s2i))';
 end
+
+if MODE == 4
+    x_sa = orbit.r/norm(orbit.r);
+    z_sa = orbit.v/norm(orbit.v);
+    y_sa = cross(z_sa,x_sa);
+    DCM_sa=horzcat(x_sa,y_sa,z_sa);
+    q_s2i = dcm2quat(DCM_sa);
+    att.q_i2r = (quatinv (q_s2i))';
+end
+
+if MODE == 5
+    x_sa = - orbit.v/norm(orbit.v);
+    z_sa = orbit.sun_ECI_0 - dot(x_sa,orbit.sun_ECI_0)*x_sa;
+    z_sa = z_sa/norm(z_sa);
+    y_sa = cross(z_sa,x_sa);
+    DCM_sa = horzcat(x_sa,y_sa,z_sa);
+    q_s2i = dcm2quat(DCM_sa);
+    att.q_i2r = (quatinv(q_s2i))';
+end
+
+if MODE == 6
+    att.q_i2r = [1 0 0 0];
+end
+
+if MODE == 7
+    prompt = "What is the desired quaternion value? ";
+    att.q_i2r = input(prompt);
+end
+
+if MODE == 8
+    z_sa = orbit.sun_ECI_0/norm(orbit.sun_ECI_0);
+    nadir = - orbit.r/norm(orbit.r);
+    x_sa = dot(nadir,z_sa)*z_sa - nadir;
+    x_sa = x_sa/norm(x_sa);
+    y_sa = cross(z_sa,x_sa);
+    DCM_sa=horzcat(x_sa,y_sa,z_sa);
+    q_s2i = dcm2quat(DCM_sa);
+    att.q_i2r = (quatinv (q_s2i))';
+end
+
 
 %Attitude: Initialisation of angles and rotational speeds:
 att.alpha = 20;         %Initial orientation Yaw [deg]  20
@@ -97,19 +147,12 @@ att.wz0 = 0.1;
 %time
 TimeStep = 1;        %fixed-step size in solver, Default time step=0.25
 Torbit=2*pi*sqrt((orbit.a)^3/(3.986004418E5));
-N_orbits = 0.03;           %number of orbits to be simulated
+N_orbits = 1;           %number of orbits to be simulated
 %Time spent performing the simulation in seconds (one orbit is ~5400 s):
 t_sim = N_orbits*Torbit;
 
 %% Load other parameters
-load('SatConstants.mat')
-%load('workspace.mat') %for 2021 simulation
-sat.inertia = [0.06   0   0;...   %already saved
-                0   0.09  0;...
-                0     0   0.14];
-sat.mass = 12;      %Satellite Mass [kg]
-sat.CoG = [0;5.1;-4.2]/1000;   %Satellite Center of Gravity [m] in the BRF
-%Needs to agree with the CoG calculated in the aerodynamic torque.
+load('SatConstant_Updated_04-2023.mat')
 
 % Other blocks configuration
 
