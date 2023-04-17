@@ -1,16 +1,17 @@
 % MAIN CODE TO BE EXECUTED
-clear 
+clear all
+close all
 
 %Orbit simulation
 %The object is assumed submitted only to gravity and it's mass is m in kg
 m = 12; %mass (kg)
 %Initialisation of Keplerian parameters
-a = 6678;     %semimajor axis [km]
-e = 0.001;    %eccentricity
-i = 98;     %inclination [degrees]
-O =  10;      %Right ascension of the right ascending node [degrees] %max 197, min 300.5 %181
-o = 90;      %Argument of the perigee [degrees]                      %max 90, min 0      %90
-nu = 0;       %True anomaly [degrees]
+orbit.a = 6678;     %semimajor axis [km]
+orbit.e = 0.001;    %eccentricity
+orbit.i = 98;     %inclination [degrees]
+orbit.O =  10;      %Right ascension of the right ascending node [degrees] %max 197, min 300.5 %181
+orbit.o = 90;      %Argument of the perigee [degrees]                      %max 90, min 0      %90
+orbit.nu = 0;       %True anomaly [degrees]
 %beta angle  ~9 deg. 21/3, i=98, O=10, 
 %beta angle ~29 deg. 21/3, i=98, O=30,
 %beta angle ~48 deg. 21/3, i=98, O=50,  
@@ -34,77 +35,6 @@ MODE = 2;   %"sun-aero" pointing mode
 %where the state of the B-dot is enabled (1). 
 % 7: Reference quaternion is a custom quaternion that has to be defined by the 
 %user as an input to the mission block. 
-% 8: "sun-drag" Reference quaternion is such that z is aligned with 
-%the velocity direction to maximize the drag and x is aligned as best 
-%as possible with the velocity direction. 
-
-if MODE == 1
-    x_sa = orbit.v/norm(orbit.v);
-    z_sa = orbit.r/norm(orbit.r);
-    y_sa = -cross(x_sa,z_sa);
-    DCM_orb = horzcat(x_sa,y_sa,z_sa);
-    q_s2o = dcm2quat(DCM_orb);
-    att.q_i2r = (quatinv (q_s2o))';
-end
-
-if MODE == 2
-    x_sa = orbit.v/norm(orbit.v);
-    z_sa = orbit.sun_ECI_0 - dot(x_sa,orbit.sun_ECI_0)*x_sa;
-    z_sa = z_sa/norm(z_sa);
-    y_sa = cross(z_sa,x_sa);
-    DCM_sa = horzcat(x_sa,y_sa,z_sa);
-    q_s2i = dcm2quat(DCM_sa);
-    att.q_i2r = (quatinv(q_s2i))';
-end
-
-if MODE == 3
-    z_sa = orbit.sun_ECI_0/norm(orbit.sun_ECI_0);
-    x_sa = dot(orbit.v,z_sa)*z_sa - orbit.v;
-    x_sa = x_sa/norm(x_sa);
-    y_sa = cross(z_sa,x_sa);
-    DCM_sa=horzcat(x_sa,y_sa,z_sa);
-    q_s2i = dcm2quat(DCM_sa);
-    att.q_i2r = (quatinv (q_s2i))';
-end
-
-if MODE == 4
-    x_sa = orbit.r/norm(orbit.r);
-    z_sa = orbit.v/norm(orbit.v);
-    y_sa = cross(z_sa,x_sa);
-    DCM_sa=horzcat(x_sa,y_sa,z_sa);
-    q_s2i = dcm2quat(DCM_sa);
-    att.q_i2r = (quatinv (q_s2i))';
-end
-
-if MODE == 5
-    x_sa = - orbit.v/norm(orbit.v);
-    z_sa = orbit.sun_ECI_0 - dot(x_sa,orbit.sun_ECI_0)*x_sa;
-    z_sa = z_sa/norm(z_sa);
-    y_sa = cross(z_sa,x_sa);
-    DCM_sa = horzcat(x_sa,y_sa,z_sa);
-    q_s2i = dcm2quat(DCM_sa);
-    att.q_i2r = (quatinv(q_s2i))';
-end
-
-if MODE == 6
-    att.q_i2r = [1 0 0 0];
-end
-
-if MODE == 7
-    prompt = "What is the desired quaternion value? ";
-    att.q_i2r = input(prompt);
-end
-
-if MODE == 8
-    z_sa = orbit.sun_ECI_0/norm(orbit.sun_ECI_0);
-    nadir = - orbit.r/norm(orbit.r);
-    x_sa = dot(nadir,z_sa)*z_sa - nadir;
-    x_sa = x_sa/norm(x_sa);
-    y_sa = cross(z_sa,x_sa);
-    DCM_sa=horzcat(x_sa,y_sa,z_sa);
-    q_s2i = dcm2quat(DCM_sa);
-    att.q_i2r = (quatinv (q_s2i))';
-end
 
 %Initialisation of date
 date.year = 2024;
@@ -117,7 +47,7 @@ date.seconds = 0;
 %Simulation time parameters
 N_orbits = 3;
 %Torbit=90*60;       %1 orbit approx. 90 minutes
-Torbit=2*pi*sqrt(a^3/(3.986004418E5));
+Torbit=2*pi*sqrt(orbit.a^3/(3.986004418E5));
 %tsimulation=60*45;   %in [s] 1 orbit
 tsimulation=N_orbits*Torbit;
 %tsimulation=10000;
@@ -227,10 +157,10 @@ Vcss=0.01745^2;
 %Vcss=(1e-1)^2;
 
 %% Simulation
-MEKFsim_v2R2019a         %MATLAB R2019a
-%MEKFsim_v2              %MATLAB R2020b
-data=sim('MEKFsim_v2R2019a');
-%data=sim('MEKFsim_v2');
+%MEKFsim_v2R2019a         %MATLAB R2019a
+MEKFsim_v2              %MATLAB R2020b
+%data=sim('MEKFsim_v2R2019a');
+data=sim('MEKFsim_v2');
 
 %% Run post-processing functions
 timesec = data.tout;
