@@ -14,8 +14,26 @@ orbit.nu = 0;       %True anomaly [degrees]
 %beta angle ~48 deg. 21/3, i=98, O=50,  
 %i = 98: notice that for the date 21/3 (equinox) the RAAN (O) is close to the beta angle.
 
+%Initialisation of date
+%date.year = 2022;
+date.year = 2024;
+%date.month = 1;
+date.month = 3;
+%date.day = 1;
+date.day = 21;
+date.hours = 0;
+date.minutes = 0;
+date.seconds = 0;
+
+%Get initial position and velocity
+[orbit.r,orbit.v] = orb2rv_init(orbit.a,orbit.e,orbit.i*pi/180,orbit.O*pi/180,orbit.o*pi/180,orbit.nu*pi/180,0,0,0);
+%Get Sun initial direction
+%Implement the position of the Sun with respect to the Earth for initialization date with DE405.
+orbit.sun_ECI_0 = (planetEphemeris(juliandate(date.year,date.month,date.day),'Earth','Sun'))';
+orbit.sun_ECI_0 = orbit.sun_ECI_0/norm (orbit.sun_ECI_0);   %get unit vector
+
 %POINTING MODE
-MODE = 2;   %"sun-aero" pointing mode
+MODE = 5;   %"sun-aero" pointing mode
 % 1: "orbital" Reference quaternion is aligned with ORF. 
 % 2: "sun-aero" Reference quaternion is such that x is aligned with velocity 
 %and z is aligned as best as possible with the sun direction to maximize the power generation 
@@ -105,13 +123,13 @@ if MODE == 8
 end
 
 %to test other errors
-att.alpha = 50;         %Initial orientation Yaw [deg]
-att.beta = 20;         %Initial orientation Pitch [deg]
-att.gamma = 160;         %Initial orientation Roll [deg]
+att.alpha = 1;         %Initial orientation Yaw [deg]
+att.beta = 2;         %Initial orientation Pitch [deg]
+att.gamma = 3;         %Initial orientation Roll [deg]
 %Initial angular velocities in each axis (x,y,z) of body frame [degrees/sec]
-att.wx0 = -0.1;        
-att.wy0 = 0.1;
-att.wz0 = 0.1;
+att.wx0 = 0;        
+att.wy0 = 0;
+att.wz0 = 0;
 %works: 10, -20, 30 and -1, 1, 1. mode 2, not 4
 
 %time
@@ -121,16 +139,6 @@ N_orbits = 1;           %number of orbits to be simulated
 %Time spent performing the simulation in seconds (one orbit is ~5400 s):
 t_sim = N_orbits*Torbit;
 
-%Initialisation of date
-%date.year = 2022;
-date.year = 2024;
-%date.month = 1;
-date.month = 3;
-%date.day = 1;
-date.day = 21;
-date.hours = 0;
-date.minutes = 0;
-date.seconds = 0;
 
 %% Load other parameters
 load('SatConstant_Updated_04-2023.mat')
@@ -213,21 +221,15 @@ sat.thruster.Nfirings=3;            %number of thrust firings
 %Control_v6                 %MATLAB R2020b, latest one working fine
 %Control_v4_desat0           %MATLAB R2020b
 
-%% LQR model
+%% LQR controller feedback gain
+%LQR_Compute_feedback_gain_matrix;
+% K = [0.0013  0  0  0.0111  0  0;
+%     0  0.0016  0  0  0.0129  0;
+%     0  0  0.0017  0  0  0.0157]; %q=0.004 r=1000
 
-q = 0.001;
-r = 1000;
-
-
-Q = [q  0  0  0  0  0;
-     0  q  0  0  0  0;
-     0  0  q  0  0  0;
-     0  0  0  q  0  0;
-     0  0  0  0  q  0;
-     0  0  0  0  0  q];
+K = [0.00053417  0  0  0.0070506  0  0;
+    0  0.00071733 0  0  0.00840481  0;
+    0  0  0.00081350 0  0  0.010476]; %q=0.004 r=4000
 
 
-R = [r  0  0;
-     0  r  0;
-     0  0  r];
 

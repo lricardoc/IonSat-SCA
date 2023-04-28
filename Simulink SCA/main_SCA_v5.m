@@ -33,7 +33,7 @@ orbit.sun_ECI_0 = (planetEphemeris(juliandate(date.year,date.month,date.day),'Ea
 orbit.sun_ECI_0 = orbit.sun_ECI_0/norm (orbit.sun_ECI_0);   %get unit vector
 
 %POINTING MODE
-MODE = 2;   %"sun-aero" pointing mode
+MODE = 1;   %"sun-aero" pointing mode
 % 1: "orbital" Reference quaternion is aligned with ORF. 
 % 2: "sun-aero" Reference quaternion is such that x is aligned with velocity 
 %and z is aligned as best as possible with the sun direction to maximize the power generation 
@@ -61,7 +61,7 @@ if MODE == 1
     y_sa = -cross(x_sa,z_sa);
     DCM_orb = horzcat(x_sa,y_sa,z_sa);
     q_s2o = dcm2quat(DCM_orb);
-    att.q_i2r = (quatinv (q_s2o))';
+    att.q_i2r = (quatinv(q_s2o))';
 end
 
 if MODE == 2
@@ -81,7 +81,7 @@ if MODE == 3
     y_sa = cross(z_sa,x_sa);
     DCM_sa=horzcat(x_sa,y_sa,z_sa);
     q_s2i = dcm2quat(DCM_sa);
-    att.q_i2r = (quatinv (q_s2i))';
+    att.q_i2r = (quatinv(q_s2i))';
 end
 
 if MODE == 4
@@ -90,7 +90,7 @@ if MODE == 4
     y_sa = cross(z_sa,x_sa);
     DCM_sa=horzcat(x_sa,y_sa,z_sa);
     q_s2i = dcm2quat(DCM_sa);
-    att.q_i2r = (quatinv (q_s2i))';
+    att.q_i2r = (quatinv(q_s2i))';
 end
 
 if MODE == 5
@@ -120,14 +120,14 @@ if MODE == 8
     y_sa = cross(z_sa,x_sa);
     DCM_sa=horzcat(x_sa,y_sa,z_sa);
     q_s2i = dcm2quat(DCM_sa);
-    att.q_i2r = (quatinv (q_s2i))';
+    att.q_i2r = (quatinv(q_s2i))';
 end
 
 
 %Attitude: Initialisation of angles and rotational speeds:
-att.alpha = 20;         %Initial orientation Yaw [deg]  20
-att.beta = 80;         %Initial orientation Pitch [deg] 80  sould not exceed +-90 deg.
-att.gamma = 50;         %Initial orientation Roll [deg] 50 
+att.alpha = rand*180;         %Initial orientation Yaw [deg]  20
+att.beta = rand*90;         %Initial orientation Pitch [deg] 80  sould not exceed +-90 deg.
+att.gamma = 50*rand;         %Initial orientation Roll [deg] 50 
 % if abs(att.beta)>90     %UNSURE if this is correct
 %     att.beta=-att.beta;
 %     att.alpha=att.alpha+180;
@@ -147,7 +147,7 @@ att.wz0 = 0.1;
 %time
 TimeStep = 1;        %fixed-step size in solver, Default time step=0.25
 Torbit=2*pi*sqrt((orbit.a)^3/(3.986004418E5));
-N_orbits = 1;           %number of orbits to be simulated
+N_orbits = 2;           %number of orbits to be simulated
 %Time spent performing the simulation in seconds (one orbit is ~5400 s):
 t_sim = N_orbits*Torbit;
 
@@ -214,3 +214,6 @@ sat.thruster.firstimpulse=4000;     %first thrust after start sim in [s]
 sat.thruster.Nfirings=3;            %number of thrust firings
 %% Simulation
 Control_v7_PID                %MATLAB R2020b, latest one working fine
+
+
+
