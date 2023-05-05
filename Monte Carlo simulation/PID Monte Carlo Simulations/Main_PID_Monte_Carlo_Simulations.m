@@ -3,12 +3,13 @@ close
 %% Initialize parameters				
 %Load IONSat parameters
 load('SatConstant_Updated_04-2023.mat')
-
+%Initial sat inertia
+sat_inertia_original = sat.inertia;
 
 %Fix the simulation parameters 
 TimeStep = 1;        %fixed-step size in solver, Default time step=0.25
 Torbit=2*pi*sqrt((orbit.a)^3/(3.986004418E5));  %(one orbit is ~5400 s)
-N_orbits = 1;           %number of orbits to be simulated
+N_orbits = 7;           %number of orbits to be simulated
 %Time spent performing the simulation in seconds :
 t_sim = Torbit*N_orbits;
 % t_sim = 3000;
@@ -67,7 +68,7 @@ sat.thruster.Nfirings=3;            %number of thrust firings
 
 
 %% Monte Carlo simulation
-n = 10; % number of simulation, take around 12 minutes for n=10
+n = 3; % number of simulation, take around 12 minutes for n=10
 
 %initialize lists of data
 n_points = round(t_sim) + 1; % number of points to save per simulations
@@ -109,17 +110,18 @@ Inertia =  zeros(6,n);
 for i = 1:n
     % Add noise to initial conditions
     %Randomize IONSat's inertia at -+20% of the fixed inertia
-    I_xx =  0.0702*8/10 + 0.0702*rand*2/5;
-    I_yy =  0.113*8/10 + 0.113*rand*2/5;
-    I_zz =  0.16*8/10 + 0.16*rand*2/5;
-    I_xy =  0.0017*8/10 + 0.0017*rand*2/5;
-    I_xz = -0.0023*8/10 + 0.0023*rand*2/5;
-    I_yz = -0.0003*8/10 + 0.0003*rand*2/5;
-    sat_inertia = [I_xx I_xy I_xz;
-                   I_xy I_yy I_yz;
-                   I_xz I_yz I_zz];
+%     I_xx =  0.0702*9/10 + 0.0702*rand/5;
+%     I_yy =  0.113*9/10 + 0.113*rand/5;
+%     I_zz =  0.16*9/10 + 0.16*rand/5;
+%     I_xy =  0.0017*9/10 + 0.0017*rand/5;
+%     I_xz = -0.0023*9/10 + 0.0023*rand/5;
+%     I_yz = -0.0003*9/10 + 0.0003*rand/5;
+%     sat_inertia = [I_xx I_xy I_xz;
+%                    I_xy I_yy I_yz;
+%                    I_xz I_yz I_zz];
 
 
+    sat_inertia = sat_inertia_original;
     %orbit altitude generate randomly between 
     %orbit.a_noisy = orbit.a + rand*100;      
     %Orbit: Initialisation of Keplerian parameters
@@ -135,23 +137,23 @@ for i = 1:n
     
     MODE_manager;
 
-    % generate random number between -180 and +180     
-    att.alpha = 360*rand - 180;   % Yaw  
-    att.beta = 360*rand - 180;     % Pitch   
-    att.gamma = 360*rand - 180;    % Roll   
+%     % generate random number between -180 and +180     
+%     att.alpha = 360*rand - 180;   % Yaw  
+%     att.beta = 360*rand - 180;     % Pitch   
+%     att.gamma = 360*rand - 180;    % Roll   
 % 
-%     att.alpha = 104.547;   % Yaw  
-%     att.beta = 161.75;     % Pitch   
-%     att.gamma = -62.076;    % Roll   
+    att.alpha = 5;   % Yaw  
+    att.beta = -5;     % Pitch   
+    att.gamma = 5;    % Roll   
 
     %Initial angular velocities in each axis (x,y,z) of body frame [degrees/sec]
-    att.wx0 = 40*rand - 20;    % generate random number between -5 and +5    
-    att.wy0 = 40*rand - 20;
-    att.wz0 = 40*rand - 20;
-    
-%     att.wx0 = 1.713;    % generate random number between -5 and +5    
-%     att.wy0 = -0.61355;
-%     att.wz0 = 3.3350;
+%     att.wx0 = 40*rand - 20;    % generate random number between -20 and +20    
+%     att.wy0 = 40*rand - 20;
+%     att.wz0 = 40*rand - 20;
+%     
+    att.wx0 = 0;    
+    att.wy0 = -0;
+    att.wz0 = 0;
 
     %Save the inital conditions
     Alpha0(i) = att.alpha;
@@ -163,12 +165,12 @@ for i = 1:n
     N(i)=i;
     Orbit_altitude(i) = orbit.a - 6378;
     
-    Inertia(1,i) = I_xx;
-    Inertia(2,i) = I_yy;
-    Inertia(3,i) = I_zz;
-    Inertia(4,i) = I_xy;
-    Inertia(5,i) = I_xz;
-    Inertia(6,i) = I_yz;
+%     Inertia(1,i) = I_xx;
+%     Inertia(2,i) = I_yy;
+%     Inertia(3,i) = I_zz;
+%     Inertia(4,i) = I_xy;
+%     Inertia(5,i) = I_xz;
+%     Inertia(6,i) = I_yz;
 
 
     % run the simulink 
@@ -336,7 +338,10 @@ title('Average power consumption of all the RW');
 %Plot the RW saturation duration
 figure;
 hold on;
-scatter(N,PID_RW_saturation_duration);
+scatter(N,PID_RW_saturation_duration(1,:));
+scatter(N,PID_RW_saturation_duration(2,:));
+scatter(N,PID_RW_saturation_duration(3,:));
+scatter(N,PID_RW_saturation_duration(4,:));
 legend('RW1','RW2','RW3','RW4');
 xlabel('n-th simulation');
 ylabel('Saturation duration (in seconds)');
@@ -404,21 +409,26 @@ title('RW4');
 xlabel(a,'Time in seconds')
 ylabel(a,'Torque in Nm')
 title(a,'RW control torque')
-
-%Plot the orbit altitude
-figure;
-hold on;
-scatter(N,Orbit_altitude);
-xlabel('n-th simulation');
-ylabel('Altitude in km');
-title('Orbit altitude');
-
-%Plot the inertia 
-figure;
-hold on;
-scatter(N,Inertia);
-legend('I_{xx}','I_{yy}','I_{zz}','I_{xy}','I_{xz}','I_{yz}');
-xlabel('n-th simulation');
-ylabel('Inertia in kg.m²');
-title('Inertia of IONSat for every simulations');
+% 
+% %Plot the orbit altitude
+% figure;
+% hold on;
+% scatter(N,Orbit_altitude);
+% xlabel('n-th simulation');
+% ylabel('Altitude in km');
+% title('Orbit altitude');
+% 
+% %Plot the inertia 
+% figure;
+% hold on;
+% scatter(N,Inertia(1,:));
+% scatter(N,Inertia(2,:));
+% scatter(N,Inertia(3,:));
+% scatter(N,Inertia(4,:));
+% scatter(N,Inertia(5,:));
+% scatter(N,Inertia(6,:));
+% legend('I_{xx}','I_{yy}','I_{zz}','I_{xy}','I_{xz}','I_{yz}');
+% xlabel('n-th simulation');
+% ylabel('Inertia in kg.m²');
+% title('Inertia of IONSat for every simulations');
 

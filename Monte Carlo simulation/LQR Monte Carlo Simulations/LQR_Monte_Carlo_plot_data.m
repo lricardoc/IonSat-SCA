@@ -113,7 +113,10 @@ title('Average power consumption of all the RW');
 %Plot the RW saturation duration
 figure;
 hold on;
-scatter(N,LQR_RW_saturation_duration);
+scatter(N,LQR_RW_saturation_duration(1,:));
+scatter(N,LQR_RW_saturation_duration(2,:));
+scatter(N,LQR_RW_saturation_duration(3,:));
+scatter(N,LQR_RW_saturation_duration(4,:));
 legend('RW1','RW2','RW3','RW4');
 xlabel('n-th simulation');
 ylabel('Saturation duration (in seconds)');
@@ -182,28 +185,38 @@ xlabel(a,'Time in seconds')
 ylabel(a,'Torque in Nm')
 title(a,'RW control torque')
 
-%Plot the orbit altitude
-figure;
-hold on;
-scatter(N,Orbit_altitude);
-xlabel('n-th simulation');
-ylabel('Altitude in km');
-title('Orbit altitude');
-
-%Plot the inertia 
-figure;
-hold on;
-scatter(N,Inertia);
-legend('I_{xx}','I_{yy}','I_{zz}','I_{xy}','I_{xz}','I_{yz}');
-xlabel('n-th simulation');
-ylabel('Inertia in kg.m²');
-title('Inertia of IONSat for every simulations');
-
-%Plot the feedback gain coefficients 
-figure;
-hold on;
-scatter(N,Feedback_gain);
-legend('Kq1','Kq2','Kq3','Kw1','Kw2','Kw3');
-xlabel('n-th simulation');
-ylabel('Feedback gain value');
-title('Feedback gain relevant coefficients');
+% %Plot the orbit altitude
+% figure;
+% hold on;
+% scatter(N,Orbit_altitude);
+% xlabel('n-th simulation');
+% ylabel('Altitude in km');
+% title('Orbit altitude');
+% 
+% %Plot the inertia 
+% figure;
+% hold on;
+% scatter(N,Inertia(1,:));
+% scatter(N,Inertia(2,:));
+% scatter(N,Inertia(3,:));
+% scatter(N,Inertia(4,:));
+% scatter(N,Inertia(5,:));
+% scatter(N,Inertia(6,:));
+% legend('I_{xx}','I_{yy}','I_{zz}','I_{xy}','I_{xz}','I_{yz}');
+% xlabel('n-th simulation');
+% ylabel('Inertia in kg.m²');
+% title('Inertia of IONSat for every simulations');
+% 
+% %Plot the feedback gain coefficients 
+% figure;
+% hold on;
+% scatter(N,Feedback_gain(1,:));
+% scatter(N,Feedback_gain(2,:));
+% scatter(N,Feedback_gain(3,:));
+% scatter(N,Feedback_gain(4,:));
+% scatter(N,Feedback_gain(5,:));
+% scatter(N,Feedback_gain(6,:));
+% legend('Kq1','Kq2','Kq3','Kw1','Kw2','Kw3');
+% xlabel('n-th simulation');
+% ylabel('Feedback gain value');
+% title('Feedback gain relevant coefficients');

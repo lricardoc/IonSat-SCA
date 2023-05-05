@@ -4,7 +4,7 @@ close
 %Load IONSat parameters
 load('SatConstant_Updated_04-2023.mat')
 
-
+sat_inertia_original = sat.inertia;
 
 %Fix the simulation parameters 
 TimeStep = 1;        %fixed-step size in solver, Default time step=0.25
@@ -74,9 +74,9 @@ sat.thruster.Nfirings=3;            %number of thrust firings
 %     0  0.0016  0  0  0.0129  0;
 %     0  0  0.0017  0  0  0.0157]; %q=0.004 r=1000
 
-% K = [0.00053417  0  0  0.0070506  0  0;
-%     0  0.00071733 0  0  0.00840481  0;
-%     0  0  0.00081350 0  0  0.010476]; %q=0.004 r=4000
+K = [0.00053417  0  0  0.0070506  0  0;
+    0  0.00071733 0  0  0.00840481  0;
+    0  0  0.00081350 0  0  0.010476]; %q=0.004 r=4000
 
 
 %% Monte Carlo simulation
@@ -124,19 +124,19 @@ for i = 1:n
     % Add noise to initial conditions
     %Randomize IONSat's inertia at -+20% of the fixed inertia
     % If the Inertia is fixed for all n simulations, comment the following 9 lines
-    I_xx =  0.0702*8/10 + 0.0702*rand*2/5;
-    I_yy =  0.113*8/10 + 0.113*rand*2/5;
-    I_zz =  0.16*8/10 + 0.16*rand*2/5;
-    I_xy =  0.0017*8/10 + 0.0017*rand*2/5;
-    I_xz = -0.0023*8/10 + 0.0023*rand*2/5;
-    I_yz = -0.0003*8/10 + 0.0003*rand*2/5;
+    I_xx =  0.0702*9/10 + 0.0702*rand/5;
+    I_yy =  0.113*9/10 + 0.113*rand/5;
+    I_zz =  0.16*9/10 + 0.16*rand/5;
+    I_xy =  0.0017*9/10 + 0.0017*rand/5;
+    I_xz = -0.0023*9/10 + 0.0023*rand/5;
+    I_yz = -0.0003*9/10 + 0.0003*rand/5;
     sat_inertia = [I_xx I_xy I_xz;
                    I_xy I_yy I_yz;
                    I_xz I_yz I_zz];
     %Compute the new feedback gain matrix
     %NB:The feedback gain depend of the inertia, 
     %therefore if the inertia changes the feedback gain has to be updated accordingly 
-    LQR_Compute_feedback_gain_matrix; % If the Inertia is fixed for all n simulations, comment this line
+    %LQR_Compute_feedback_gain_matrix; % If the Inertia is fixed for all n simulations, comment this line
 
     %orbit altitude generate randomly between 
     %orbit.a_noisy = orbit.a + rand*100;      
@@ -154,22 +154,22 @@ for i = 1:n
     MODE_manager;
 
     % generate random number between -180 and +180     
-    att.alpha = 360*rand - 180;   % Yaw  
-    att.beta = 360*rand - 180;     % Pitch   
-    att.gamma = 360*rand - 180;    % Roll   
+%     att.alpha = 360*rand - 180;   % Yaw  
+%     att.beta = 360*rand - 180;     % Pitch   
+%     att.gamma = 360*rand - 180;    % Roll   
 % 
-%     att.alpha = 104.547;   % Yaw  
-%     att.beta = 161.75;     % Pitch   
-%     att.gamma = -62.076;    % Roll   
+    att.alpha = 5;   % Yaw  
+    att.beta = -5;     % Pitch   
+    att.gamma = 5;    % Roll   
 
     %Initial angular velocities in each axis (x,y,z) of body frame [degrees/sec]
-    att.wx0 = 40*rand - 20;    % generate random number between -5 and +5    
-    att.wy0 = 40*rand - 20;
-    att.wz0 = 40*rand - 20;
-    
-%     att.wx0 = 1.713;    % generate random number between -5 and +5    
-%     att.wy0 = -0.61355;
-%     att.wz0 = 3.3350;
+%     att.wx0 = 40*rand - 20;    % generate random number between -5 and +5    
+%     att.wy0 = 40*rand - 20;
+%     att.wz0 = 40*rand - 20;
+%     
+    att.wx0 = 0;    % generate random number between -5 and +5    
+    att.wy0 = -0;
+    att.wz0 = 0;
 
     %Save the inital conditions
     Alpha0(i) = att.alpha;
@@ -361,7 +361,10 @@ title('Average power consumption of all the RW');
 %Plot the RW saturation duration
 figure;
 hold on;
-scatter(N,LQR_RW_saturation_duration);
+scatter(N,LQR_RW_saturation_duration(1,:));
+scatter(N,LQR_RW_saturation_duration(2,:));
+scatter(N,LQR_RW_saturation_duration(3,:));
+scatter(N,LQR_RW_saturation_duration(4,:));
 legend('RW1','RW2','RW3','RW4');
 xlabel('n-th simulation');
 ylabel('Saturation duration (in seconds)');
@@ -441,7 +444,12 @@ title('Orbit altitude');
 %Plot the inertia 
 figure;
 hold on;
-scatter(N,Inertia);
+scatter(N,Inertia(1,:));
+scatter(N,Inertia(2,:));
+scatter(N,Inertia(3,:));
+scatter(N,Inertia(4,:));
+scatter(N,Inertia(5,:));
+scatter(N,Inertia(6,:));
 legend('I_{xx}','I_{yy}','I_{zz}','I_{xy}','I_{xz}','I_{yz}');
 xlabel('n-th simulation');
 ylabel('Inertia in kg.m²');
@@ -450,7 +458,14 @@ title('Inertia of IONSat for every simulations');
 %Plot the feedback gain coefficients 
 figure;
 hold on;
-scatter(N,Feedback_gain);
+scatter(N,Feedback_gain(1,:));
+scatter(N,Feedback_gain(2,:));
+scatter(N,Feedback_gain(3,:));
+scatter(N,Feedback_gain(4,:));
+scatter(N,Feedback_gain(5,:));
+scatter(N,Feedback_gain(6,:));
+
+
 legend('Kq1','Kq2','Kq3','Kw1','Kw2','Kw3');
 xlabel('n-th simulation');
 ylabel('Feedback gain value');
