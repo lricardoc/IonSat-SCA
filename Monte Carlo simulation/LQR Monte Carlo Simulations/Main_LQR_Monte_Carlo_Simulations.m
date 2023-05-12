@@ -4,6 +4,8 @@ close
 %Load IONSat parameters
 load('SatConstant_Updated_04-2023.mat')
 
+RW_failure_matrix = [1 0 1 1];
+    
 sat_inertia_original = sat.inertia;
 
 %Fix the simulation parameters 
@@ -80,7 +82,7 @@ K = [0.00053417  0  0  0.0070506  0  0;
 
 
 %% Monte Carlo simulation
-n = 100; % number of simulation, it take between 95 and 120 minutes for n=100
+n = 3; % number of simulation, it take between 95 and 120 minutes for n=100
 
 %initialize lists of data
 n_points = round(t_sim) + 1; % number of points to save per simulations
@@ -432,41 +434,41 @@ title('RW4');
 xlabel(a,'Time in seconds')
 ylabel(a,'Torque in Nm')
 title(a,'RW control torque')
-
-%Plot the orbit altitude
-figure;
-hold on;
-scatter(N,Orbit_altitude);
-xlabel('n-th simulation');
-ylabel('Altitude in km');
-title('Orbit altitude');
-
-%Plot the inertia 
-figure;
-hold on;
-scatter(N,Inertia(1,:));
-scatter(N,Inertia(2,:));
-scatter(N,Inertia(3,:));
-scatter(N,Inertia(4,:));
-scatter(N,Inertia(5,:));
-scatter(N,Inertia(6,:));
-legend('I_{xx}','I_{yy}','I_{zz}','I_{xy}','I_{xz}','I_{yz}');
-xlabel('n-th simulation');
-ylabel('Inertia in kg.m²');
-title('Inertia of IONSat for every simulations');
-
-%Plot the feedback gain coefficients 
-figure;
-hold on;
-scatter(N,Feedback_gain(1,:));
-scatter(N,Feedback_gain(2,:));
-scatter(N,Feedback_gain(3,:));
-scatter(N,Feedback_gain(4,:));
-scatter(N,Feedback_gain(5,:));
-scatter(N,Feedback_gain(6,:));
-
-
-legend('Kq1','Kq2','Kq3','Kw1','Kw2','Kw3');
-xlabel('n-th simulation');
-ylabel('Feedback gain value');
-title('Feedback gain relevant coefficients');
+% 
+% %Plot the orbit altitude
+% figure;
+% hold on;
+% scatter(N,Orbit_altitude);
+% xlabel('n-th simulation');
+% ylabel('Altitude in km');
+% title('Orbit altitude');
+% 
+% %Plot the inertia 
+% figure;
+% hold on;
+% scatter(N,Inertia(1,:));
+% scatter(N,Inertia(2,:));
+% scatter(N,Inertia(3,:));
+% scatter(N,Inertia(4,:));
+% scatter(N,Inertia(5,:));
+% scatter(N,Inertia(6,:));
+% legend('I_{xx}','I_{yy}','I_{zz}','I_{xy}','I_{xz}','I_{yz}');
+% xlabel('n-th simulation');
+% ylabel('Inertia in kg.m²');
+% title('Inertia of IONSat for every simulations');
+% 
+% %Plot the feedback gain coefficients 
+% figure;
+% hold on;
+% scatter(N,Feedback_gain(1,:));
+% scatter(N,Feedback_gain(2,:));
+% scatter(N,Feedback_gain(3,:));
+% scatter(N,Feedback_gain(4,:));
+% scatter(N,Feedback_gain(5,:));
+% scatter(N,Feedback_gain(6,:));
+% 
+% 
+% legend('Kq1','Kq2','Kq3','Kw1','Kw2','Kw3');
+% xlabel('n-th simulation');
+% ylabel('Feedback gain value');
+% title('Feedback gain relevant coefficients');

@@ -3,13 +3,16 @@ close
 %% Initialize parameters				
 %Load IONSat parameters
 load('SatConstant_Updated_04-2023.mat')
+
+RW_failure_matrix = [1 0 1 1];
+
 %Initial sat inertia
 sat_inertia_original = sat.inertia;
 
 %Fix the simulation parameters 
 TimeStep = 1;        %fixed-step size in solver, Default time step=0.25
 Torbit=2*pi*sqrt((orbit.a)^3/(3.986004418E5));  %(one orbit is ~5400 s)
-N_orbits = 7;           %number of orbits to be simulated
+N_orbits = 1;           %number of orbits to be simulated
 %Time spent performing the simulation in seconds :
 t_sim = Torbit*N_orbits;
 % t_sim = 3000;
@@ -110,18 +113,18 @@ Inertia =  zeros(6,n);
 for i = 1:n
     % Add noise to initial conditions
     %Randomize IONSat's inertia at -+20% of the fixed inertia
-%     I_xx =  0.0702*9/10 + 0.0702*rand/5;
-%     I_yy =  0.113*9/10 + 0.113*rand/5;
-%     I_zz =  0.16*9/10 + 0.16*rand/5;
-%     I_xy =  0.0017*9/10 + 0.0017*rand/5;
-%     I_xz = -0.0023*9/10 + 0.0023*rand/5;
-%     I_yz = -0.0003*9/10 + 0.0003*rand/5;
-%     sat_inertia = [I_xx I_xy I_xz;
-%                    I_xy I_yy I_yz;
-%                    I_xz I_yz I_zz];
+    I_xx =  0.0702*9/10 + 0.0702*rand/5;
+    I_yy =  0.113*9/10 + 0.113*rand/5;
+    I_zz =  0.16*9/10 + 0.16*rand/5;
+    I_xy =  0.0017*9/10 + 0.0017*rand/5;
+    I_xz = -0.0023*9/10 + 0.0023*rand/5;
+    I_yz = -0.0003*9/10 + 0.0003*rand/5;
+    sat_inertia = [I_xx I_xy I_xz;
+                   I_xy I_yy I_yz;
+                   I_xz I_yz I_zz];
 
 
-    sat_inertia = sat_inertia_original;
+%     sat_inertia = sat_inertia_original;
     %orbit altitude generate randomly between 
     %orbit.a_noisy = orbit.a + rand*100;      
     %Orbit: Initialisation of Keplerian parameters
@@ -431,4 +434,6 @@ title(a,'RW control torque')
 % xlabel('n-th simulation');
 % ylabel('Inertia in kg.m²');
 % title('Inertia of IONSat for every simulations');
+
+
 
