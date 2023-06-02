@@ -18,7 +18,7 @@ orbit.nu = 0;       %True anomaly [degrees]
 %i = 98: notice that for the date 21/3 (equinox) the RAAN (O) is close to the beta angle.
 
 %POINTING MODE
-MODE = 4;   %"sun-aero" pointing mode
+MODE = 2;   %"sun-aero" pointing mode
 % 1: "orbital" Reference quaternion is aligned with ORF. 
 % 2: "sun-aero" Reference quaternion is such that x is aligned with velocity 
 %and z is aligned as best as possible with the sun direction to maximize the power generation 
@@ -186,7 +186,7 @@ tplot=timesec;  %plot in seconds, min, etc...
 figure(1)
 set(gcf,'color','w');
     subplot(4,1,1)
-        plot(tplot,sat_Q(:,1),'b','LineWidth',1)
+        plot(tplot,sat_Q(1,:),'b','LineWidth',1)
         hold on;
         plot(tplot,Q_est(:,1),'r','LineWidth',1)
         plot(tplot,Q_est(:,1)+3*(P(:,1)),'m--','LineWidth',1)
@@ -197,7 +197,7 @@ set(gcf,'color','w');
         xlabel('time in seconds')
         grid on
     subplot(4,1,2)
-        plot(tplot,sat_Q(:,2),'b','LineWidth',1)
+        plot(tplot,sat_Q(2,:),'b','LineWidth',1)
         hold on;
         plot(tplot,Q_est(:,2),'r','LineWidth',1)
         plot(tplot,Q_est(:,2)+3*(P(:,1)),'m--','LineWidth',1)
@@ -208,7 +208,7 @@ set(gcf,'color','w');
         xlabel('time in seconds')
         grid on
     subplot(4,1,3)
-        plot(tplot,sat_Q(:,3),'b','LineWidth',1)
+        plot(tplot,sat_Q(3,:),'b','LineWidth',1)
         hold on;
         plot(tplot,Q_est(:,3),'r','LineWidth',1)
         plot(tplot,Q_est(:,3)+3*(P(:,2)),'m--','LineWidth',1)
@@ -219,7 +219,7 @@ set(gcf,'color','w');
         xlabel('time in seconds')
         grid on
     subplot(4,1,4)
-        plot(tplot,sat_Q(:,4),'b','LineWidth',1)
+        plot(tplot,sat_Q(4,:),'b','LineWidth',1)
         hold on;
         plot(tplot,Q_est(:,4),'r','LineWidth',1)
         plot(tplot,Q_est(:,4)+3*(P(:,3)),'m--','LineWidth',1)
