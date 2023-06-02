@@ -75,7 +75,7 @@ sat.thruster.Nfirings=3;            %number of thrust firings
 
 
 %Monte Carlo simulation
-n = 180; % number of simulation, take around 12 minutes for n=10
+n = 300; % number of simulation, take around 12 minutes for n=10
 
 %initialize lists of data
 n_points = round(t_sim) + 1; % number of points to save per simulations
@@ -200,13 +200,15 @@ for k =1:n
     PID_RW_average_power_consumtion(k) = mean(PID_total_power_consumption(:,k));
 end
 
-save('PID_Sim3_changing_x3_modes_9orbits_n180.mat');
+save('PID_Sim3_changing_x3_modes_9orbits_n300.mat');
 
 %% LQR
 %Clear all the previous variables exceep for the mode sequence
 clearvars -except Mode_sequence
+RW_failure_matrix = ones(1,4); % no failed RW; if 0 failed RW if 1 functionning RW
 
-%Initialize parameters				
+%Initialize parameters		
+
 %Load IONSat parameters
 load('SatConstant_Updated_04-2023.mat')
 
@@ -287,7 +289,7 @@ K = [0.00053417  0  0  0.0070506  0  0;
 
 
 %Monte Carlo simulation
-n = 180; % number of simulation, it take between 95 and 120 minutes for n=100
+n = 300; % number of simulation, it take between 95 and 120 minutes for n=100
 
 %initialize lists of data
 n_points = round(t_sim) + 1; % number of points to save per simulations
@@ -412,4 +414,4 @@ for k =1:n
     LQR_RW_average_power_consumtion(k) = mean(LQR_total_power_consumption(:,k));
 end
 
-save('LQR_Sim3_changing_x3_modes_9orbits_n180.mat');
+save('LQR_Sim3_changing_x3_modes_9orbits_n300.mat');
