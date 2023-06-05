@@ -49,10 +49,10 @@ N_orbits = 3;
 %Torbit=90*60;       %1 orbit approx. 90 minutes
 Torbit=2*pi*sqrt(orbit.a^3/(3.986004418E5));
 %tsimulation=60*45;   %in [s] 1 orbit
-tsimulation=N_orbits*Torbit;
+t_sim=N_orbits*Torbit;
 %tsimulation=10000;
 %tsimulation=2700;
-delta_t = 0.5; %simulation time step (seconds)
+TimeStep = 0.5; %simulation time step (seconds)
 
 %%% MAGNETIC FIELD MODELS - GET PROPER IGRF COEFFICIENTS %%%
 date_IGRF = [date.year,date.month,date.day];
@@ -156,214 +156,214 @@ Vcss=sat.sensors.sun_coarse_sigma^2;
 Vcss=0.01745^2;
 %Vcss=(1e-1)^2;
 
-%% Simulation
-%MEKFsim_v2R2019a         %MATLAB R2019a
-MEKFsim_v2              %MATLAB R2020b
-%data=sim('MEKFsim_v2R2019a');
-data=sim('MEKFsim_v2');
-
-%% Run post-processing functions
-timesec = data.tout;
-sat_Q = getdatasamples(data.sat_Q,(1:length(timesec)));
-sat_omega = getdatasamples(data.sat_omega,(1:length(timesec)));
-% sat_pos = getdatasamples(simOut.sat_pos,(1:t_sim));
-% sat_speed = getdatasamples(simOut.sat_speed,(1:t_sim));
-Q_est = getdatasamples(data.Q_est,(1:length(timesec)));
-W_est = getdatasamples(data.W_est,(1:length(timesec)));
-Q_error = getdatasamples(data.Quat_error,(1:length(timesec)));
-Gyro_bias = getdatasamples(data.gyro_bias,(1:length(timesec)));
-G_bias=zeros(length(timesec),3);
-for i=1:length(timesec)
-    G_bias(i,:)=Gyro_bias(:,1,i);
-end
-b_est = getdatasamples(data.b_est,(1:length(timesec)));
-P =  getdatasamples(data.Pcor,(1:length(timesec)));
-SunFine = getdatasamples(data.FSS,(1:length(timesec)));
-SunCoarse = getdatasamples(data.CSS,(1:length(timesec)));
-b_est = getdatasamples(data.b_est,(1:length(timesec)));
-tplot=timesec;  %plot in seconds, min, etc...
-
-figure(1)
-set(gcf,'color','w');
-    subplot(4,1,1)
-        plot(tplot,sat_Q(1,:),'b','LineWidth',1)
-        hold on;
-        plot(tplot,Q_est(:,1),'r','LineWidth',1)
-        plot(tplot,Q_est(:,1)+3*(P(:,1)),'m--','LineWidth',1)
-        plot(tplot,Q_est(:,1)-3*(P(:,1)),'m--','LineWidth',1)
-        legend('Real value','Estimated value')
-        title('Q0: Comparison of the estimated and real values for the satellite quaternion')
-        ylabel('')
-        xlabel('time in seconds')
-        grid on
-    subplot(4,1,2)
-        plot(tplot,sat_Q(2,:),'b','LineWidth',1)
-        hold on;
-        plot(tplot,Q_est(:,2),'r','LineWidth',1)
-        plot(tplot,Q_est(:,2)+3*(P(:,1)),'m--','LineWidth',1)
-        plot(tplot,Q_est(:,2)-3*(P(:,1)),'m--','LineWidth',1)
-        legend('Real value','Estimated value')
-        title('Q1: Comparison of the estimated and real values for the satellite quaternion')
-        ylabel('')
-        xlabel('time in seconds')
-        grid on
-    subplot(4,1,3)
-        plot(tplot,sat_Q(3,:),'b','LineWidth',1)
-        hold on;
-        plot(tplot,Q_est(:,3),'r','LineWidth',1)
-        plot(tplot,Q_est(:,3)+3*(P(:,2)),'m--','LineWidth',1)
-        plot(tplot,Q_est(:,3)-3*(P(:,2)),'m--','LineWidth',1)
-        legend('Real value','Estimated value')
-        title('Q2: Comparison of the estimated and real values for the satellite quaternion')
-        ylabel('')
-        xlabel('time in seconds')
-        grid on
-    subplot(4,1,4)
-        plot(tplot,sat_Q(4,:),'b','LineWidth',1)
-        hold on;
-        plot(tplot,Q_est(:,4),'r','LineWidth',1)
-        plot(tplot,Q_est(:,4)+3*(P(:,3)),'m--','LineWidth',1)
-        plot(tplot,Q_est(:,4)-3*(P(:,3)),'m--','LineWidth',1)
-        legend('Real value','Estimated value')
-        title('Q3: Comparison of the estimated and real values for the satellite quaternion')
-        ylabel('')
-        xlabel('time in seconds')
-        grid on
-            
-figure(3)
-set(gcf,'color','w');
-    subplot(3,1,1)
-        plot(G_bias(:,1),'b','LineWidth',1)
-        hold on;
-        plot(b_est(:,1),'r','LineWidth',1)
-%         plot(b_est(:,1)+3*P(:,4),'m--','LineWidth',1)
-%         plot(b_est(:,1)-3*P(:,4),'m--','LineWidth',1)
-        legend('Real value','Estimated value')
-        title('Comparison of the estimated and real values for the bias in gyro: Bias x')
-        ylabel('rad^2/s')
-        xlabel('time in seconds')
-        grid on
-    subplot(3,1,2)
-        plot(G_bias(:,2),'b','LineWidth',1)
-        hold on;
-        plot(b_est(:,2),'r','LineWidth',1)
-%         plot(b_est(:,2)+3*P(:,5),'m--','LineWidth',1)
-%         plot(b_est(:,2)-3*P(:,5),'m--','LineWidth',1)
-        legend('Real value','Estimated value')
-        title('Bias y')
-        ylabel('rad^2/s')
-        xlabel('time in seconds')
-        grid on
-    subplot(3,1,3)
-        plot(G_bias(:,3),'b','LineWidth',1)
-        hold on;
-        plot(b_est(:,3),'r','LineWidth',1)
-%         plot(b_est(:,3)+3*P(:,6),'m--','LineWidth',1)
-%         plot(b_est(:,3)-3*P(:,6),'m--','LineWidth',1)
-        legend('Real value','Estimated value')
-        title('Bias z')
-        ylabel('rad^2/s')
-        xlabel('time in seconds')
-        grid on
-
-figure(4)
-set(gcf,'color','w');
-    subplot(3,1,1)
-        plot(sat_omega(:,1),'b','LineWidth',1)
-        hold on;
-        plot(W_est(:,1),'r','LineWidth',1)
-        plot(W_est(:,1)+3*P(:,4),'m--','LineWidth',1)
-        plot(W_est(:,1)-3*P(:,4),'m--','LineWidth',1)
-        legend('Real value','Estimated value')
-        title('Comparison of the estimated and real values for the satellite angular velocity: Wx')
-        ylabel('')
-        xlabel('time in seconds')
-        grid on
-    subplot(3,1,2)
-        plot(sat_omega(:,2),'b','LineWidth',1)
-        hold on;
-        plot(W_est(:,2),'r','LineWidth',1)
-        plot(W_est(:,2)+3*P(:,5),'m--','LineWidth',1)
-        plot(W_est(:,2)-3*P(:,5),'m--','LineWidth',1)
-        legend('Real value','Estimated value')
-        title('Wy')
-        ylabel('')
-        xlabel('time in seconds')
-        grid on
-    subplot(3,1,3)
-        plot(sat_omega(:,3),'b','LineWidth',1)
-        hold on;
-        plot(W_est(:,3),'r','LineWidth',1)
-        plot(W_est(:,3)+3*P(:,6),'m--','LineWidth',1)
-        plot(W_est(:,3)-3*P(:,6),'m--','LineWidth',1)
-        legend('Real value','Estimated value')
-        title('Wz')
-        ylabel('')
-        xlabel('time in seconds')
-        grid on
-        
-        
-figure(5)
-set(gcf,'color','w');
-    subplot(3,1,1)
-        plot(W_est(:,1)-sat_omega(:,1),'b','LineWidth',1)
-        hold on;
-        plot(3*P(:,4),'m--','LineWidth',1)
-        plot(-3*P(:,4),'m--','LineWidth',1)
-        legend('Error estimated value')
-        title('Error of the angular velocity')
-        ylabel('W_x')
-        xlabel('time in seconds')
-        grid on
-    subplot(3,1,2)
-        plot(W_est(:,2)-sat_omega(:,2),'b','LineWidth',1)
-        hold on;
-        plot(3*P(:,5),'m--','LineWidth',1)
-        plot(-3*P(:,5),'m--','LineWidth',1)
-        legend('Error estimated value')
-        title('Error of the angular velocity')
-        ylabel('W_y')
-        xlabel('time in seconds')
-        grid on
-        grid on
-    subplot(3,1,3)
-        plot(W_est(:,3)-sat_omega(:,3),'b','LineWidth',1)
-        hold on;
-        plot(3*P(:,6),'m--','LineWidth',1)
-        plot(-3*P(:,6),'m--','LineWidth',1)
-        legend('Error estimated value')
-        title('Error of the angular velocity')
-        ylabel('W_z')
-        xlabel('time in seconds')
-        grid on
-        grid on
-        
- figure(6)
- set(gcf,'color','w');
-    subplot(2,1,1)
-    %plot(tplot, rad2deg(quat2eul(Q_error)),'LineWidth',1)
-    error=rad2deg(2*acos(Q_error(:,1)));
-    for i=1:length(error)
-        if error(i)>180
-            error(i)=360-error(i);
-        end
-    end
-    plot(tplot, rad2deg(2*acos(Q_error(:,1))),'LineWidth',1)
-    title('Error angles (current implementation)')
-    ylabel('Degrees')
-    xlabel('Time')
-    ylim([-10,10])
-    yline(5, 'r--', 'LineWidth', 1);
-    yline(-5, 'r--', 'LineWidth', 1);
-    legend('Error','Requirement error +','Requirement error -')
-    grid on
-    subplot(2,1,2)
-    plot(tplot, SunCoarse,'m--','LineWidth',2)
-    hold on
-    plot(tplot, SunFine,'LineWidth',2)
-    title('Error angles (current implementation)')
-    ylabel('Degrees')
-    xlabel('Time')
-    ylim([-0.5,1.5])
-    legend('Coarse sun sensor active','Fine sun sensor active')
-    grid on
+% %% Simulation
+% %MEKFsim_v2R2019a         %MATLAB R2019a
+% MEKFsim_v2              %MATLAB R2020b
+% %data=sim('MEKFsim_v2R2019a');
+% data=sim('MEKFsim_v2');
+% 
+% %% Run post-processing functions
+% timesec = data.tout;
+% sat_Q = getdatasamples(data.sat_Q,(1:length(timesec)));
+% sat_omega = getdatasamples(data.sat_omega,(1:length(timesec)));
+% % sat_pos = getdatasamples(simOut.sat_pos,(1:t_sim));
+% % sat_speed = getdatasamples(simOut.sat_speed,(1:t_sim));
+% Q_est = getdatasamples(data.Q_est,(1:length(timesec)));
+% W_est = getdatasamples(data.W_est,(1:length(timesec)));
+% Q_error = getdatasamples(data.Quat_error,(1:length(timesec)));
+% Gyro_bias = getdatasamples(data.gyro_bias,(1:length(timesec)));
+% G_bias=zeros(length(timesec),3);
+% for i=1:length(timesec)
+%     G_bias(i,:)=Gyro_bias(:,1,i);
+% end
+% b_est = getdatasamples(data.b_est,(1:length(timesec)));
+% P =  getdatasamples(data.Pcor,(1:length(timesec)));
+% SunFine = getdatasamples(data.FSS,(1:length(timesec)));
+% SunCoarse = getdatasamples(data.CSS,(1:length(timesec)));
+% b_est = getdatasamples(data.b_est,(1:length(timesec)));
+% tplot=timesec;  %plot in seconds, min, etc...
+% 
+% figure(1)
+% set(gcf,'color','w');
+%     subplot(4,1,1)
+%         plot(tplot,sat_Q(1,:),'b','LineWidth',1)
+%         hold on;
+%         plot(tplot,Q_est(:,1),'r','LineWidth',1)
+%         plot(tplot,Q_est(:,1)+3*(P(:,1)),'m--','LineWidth',1)
+%         plot(tplot,Q_est(:,1)-3*(P(:,1)),'m--','LineWidth',1)
+%         legend('Real value','Estimated value')
+%         title('Q0: Comparison of the estimated and real values for the satellite quaternion')
+%         ylabel('')
+%         xlabel('time in seconds')
+%         grid on
+%     subplot(4,1,2)
+%         plot(tplot,sat_Q(2,:),'b','LineWidth',1)
+%         hold on;
+%         plot(tplot,Q_est(:,2),'r','LineWidth',1)
+%         plot(tplot,Q_est(:,2)+3*(P(:,1)),'m--','LineWidth',1)
+%         plot(tplot,Q_est(:,2)-3*(P(:,1)),'m--','LineWidth',1)
+%         legend('Real value','Estimated value')
+%         title('Q1: Comparison of the estimated and real values for the satellite quaternion')
+%         ylabel('')
+%         xlabel('time in seconds')
+%         grid on
+%     subplot(4,1,3)
+%         plot(tplot,sat_Q(3,:),'b','LineWidth',1)
+%         hold on;
+%         plot(tplot,Q_est(:,3),'r','LineWidth',1)
+%         plot(tplot,Q_est(:,3)+3*(P(:,2)),'m--','LineWidth',1)
+%         plot(tplot,Q_est(:,3)-3*(P(:,2)),'m--','LineWidth',1)
+%         legend('Real value','Estimated value')
+%         title('Q2: Comparison of the estimated and real values for the satellite quaternion')
+%         ylabel('')
+%         xlabel('time in seconds')
+%         grid on
+%     subplot(4,1,4)
+%         plot(tplot,sat_Q(4,:),'b','LineWidth',1)
+%         hold on;
+%         plot(tplot,Q_est(:,4),'r','LineWidth',1)
+%         plot(tplot,Q_est(:,4)+3*(P(:,3)),'m--','LineWidth',1)
+%         plot(tplot,Q_est(:,4)-3*(P(:,3)),'m--','LineWidth',1)
+%         legend('Real value','Estimated value')
+%         title('Q3: Comparison of the estimated and real values for the satellite quaternion')
+%         ylabel('')
+%         xlabel('time in seconds')
+%         grid on
+%             
+% figure(3)
+% set(gcf,'color','w');
+%     subplot(3,1,1)
+%         plot(G_bias(:,1),'b','LineWidth',1)
+%         hold on;
+%         plot(b_est(:,1),'r','LineWidth',1)
+% %         plot(b_est(:,1)+3*P(:,4),'m--','LineWidth',1)
+% %         plot(b_est(:,1)-3*P(:,4),'m--','LineWidth',1)
+%         legend('Real value','Estimated value')
+%         title('Comparison of the estimated and real values for the bias in gyro: Bias x')
+%         ylabel('rad^2/s')
+%         xlabel('time in seconds')
+%         grid on
+%     subplot(3,1,2)
+%         plot(G_bias(:,2),'b','LineWidth',1)
+%         hold on;
+%         plot(b_est(:,2),'r','LineWidth',1)
+% %         plot(b_est(:,2)+3*P(:,5),'m--','LineWidth',1)
+% %         plot(b_est(:,2)-3*P(:,5),'m--','LineWidth',1)
+%         legend('Real value','Estimated value')
+%         title('Bias y')
+%         ylabel('rad^2/s')
+%         xlabel('time in seconds')
+%         grid on
+%     subplot(3,1,3)
+%         plot(G_bias(:,3),'b','LineWidth',1)
+%         hold on;
+%         plot(b_est(:,3),'r','LineWidth',1)
+% %         plot(b_est(:,3)+3*P(:,6),'m--','LineWidth',1)
+% %         plot(b_est(:,3)-3*P(:,6),'m--','LineWidth',1)
+%         legend('Real value','Estimated value')
+%         title('Bias z')
+%         ylabel('rad^2/s')
+%         xlabel('time in seconds')
+%         grid on
+% 
+% figure(4)
+% set(gcf,'color','w');
+%     subplot(3,1,1)
+%         plot(sat_omega(:,1),'b','LineWidth',1)
+%         hold on;
+%         plot(W_est(:,1),'r','LineWidth',1)
+%         plot(W_est(:,1)+3*P(:,4),'m--','LineWidth',1)
+%         plot(W_est(:,1)-3*P(:,4),'m--','LineWidth',1)
+%         legend('Real value','Estimated value')
+%         title('Comparison of the estimated and real values for the satellite angular velocity: Wx')
+%         ylabel('')
+%         xlabel('time in seconds')
+%         grid on
+%     subplot(3,1,2)
+%         plot(sat_omega(:,2),'b','LineWidth',1)
+%         hold on;
+%         plot(W_est(:,2),'r','LineWidth',1)
+%         plot(W_est(:,2)+3*P(:,5),'m--','LineWidth',1)
+%         plot(W_est(:,2)-3*P(:,5),'m--','LineWidth',1)
+%         legend('Real value','Estimated value')
+%         title('Wy')
+%         ylabel('')
+%         xlabel('time in seconds')
+%         grid on
+%     subplot(3,1,3)
+%         plot(sat_omega(:,3),'b','LineWidth',1)
+%         hold on;
+%         plot(W_est(:,3),'r','LineWidth',1)
+%         plot(W_est(:,3)+3*P(:,6),'m--','LineWidth',1)
+%         plot(W_est(:,3)-3*P(:,6),'m--','LineWidth',1)
+%         legend('Real value','Estimated value')
+%         title('Wz')
+%         ylabel('')
+%         xlabel('time in seconds')
+%         grid on
+%         
+%         
+% figure(5)
+% set(gcf,'color','w');
+%     subplot(3,1,1)
+%         plot(W_est(:,1)-sat_omega(:,1),'b','LineWidth',1)
+%         hold on;
+%         plot(3*P(:,4),'m--','LineWidth',1)
+%         plot(-3*P(:,4),'m--','LineWidth',1)
+%         legend('Error estimated value')
+%         title('Error of the angular velocity')
+%         ylabel('W_x')
+%         xlabel('time in seconds')
+%         grid on
+%     subplot(3,1,2)
+%         plot(W_est(:,2)-sat_omega(:,2),'b','LineWidth',1)
+%         hold on;
+%         plot(3*P(:,5),'m--','LineWidth',1)
+%         plot(-3*P(:,5),'m--','LineWidth',1)
+%         legend('Error estimated value')
+%         title('Error of the angular velocity')
+%         ylabel('W_y')
+%         xlabel('time in seconds')
+%         grid on
+%         grid on
+%     subplot(3,1,3)
+%         plot(W_est(:,3)-sat_omega(:,3),'b','LineWidth',1)
+%         hold on;
+%         plot(3*P(:,6),'m--','LineWidth',1)
+%         plot(-3*P(:,6),'m--','LineWidth',1)
+%         legend('Error estimated value')
+%         title('Error of the angular velocity')
+%         ylabel('W_z')
+%         xlabel('time in seconds')
+%         grid on
+%         grid on
+%         
+%  figure(6)
+%  set(gcf,'color','w');
+%     subplot(2,1,1)
+%     %plot(tplot, rad2deg(quat2eul(Q_error)),'LineWidth',1)
+%     error=rad2deg(2*acos(Q_error(:,1)));
+%     for i=1:length(error)
+%         if error(i)>180
+%             error(i)=360-error(i);
+%         end
+%     end
+%     plot(tplot, rad2deg(2*acos(Q_error(:,1))),'LineWidth',1)
+%     title('Error angles (current implementation)')
+%     ylabel('Degrees')
+%     xlabel('Time')
+%     ylim([-10,10])
+%     yline(5, 'r--', 'LineWidth', 1);
+%     yline(-5, 'r--', 'LineWidth', 1);
+%     legend('Error','Requirement error +','Requirement error -')
+%     grid on
+%     subplot(2,1,2)
+%     plot(tplot, SunCoarse,'m--','LineWidth',2)
+%     hold on
+%     plot(tplot, SunFine,'LineWidth',2)
+%     title('Error angles (current implementation)')
+%     ylabel('Degrees')
+%     xlabel('Time')
+%     ylim([-0.5,1.5])
+%     legend('Coarse sun sensor active','Fine sun sensor active')
+%     grid on

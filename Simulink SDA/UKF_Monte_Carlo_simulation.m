@@ -34,10 +34,10 @@ N_orbits = 1;
 %Torbit=90*60;       %1 orbit approx. 90 minutes
 Torbit=2*pi*sqrt(orbit.a^3/(3.986004418E5));
 %tsimulation=60*45;   %in [s] 1 orbit
-tsimulation=N_orbits*Torbit;
+t_sim=N_orbits*Torbit;
 %tsimulation=10000;
 %tsimulation=2700;
-delta_t = 1; %simulation time step (seconds)
+TimeStep = 1; %simulation time step (seconds)
 
 %%% MAGNETIC FIELD MODELS - GET PROPER IGRF COEFFICIENTS %%%
 date_IGRF = [date.year,date.month,date.day];
@@ -133,10 +133,10 @@ Vcss=0.01745^2;
 
 
 %% Monte Carlo simulation
-n = 100; % number of simulation, take around 12 minutes for n=10
+n = 25; % number of simulation, take around 12 minutes for n=10
 
 %initialize lists of data
-n_points = round(tsimulation) + 1; % number of points to save per simulations
+n_points = round(t_sim) + 1; % number of points to save per simulations
 
 GYRO_sigma = zeros(1,n);
 Gyro_bias = zeros(1,n);
@@ -197,7 +197,8 @@ for i = 1:n
     UKF_bias_x(:,i) = simResults.gyro_bias.Data(1,:);
     UKF_bias_y(:,i) = simResults.gyro_bias.Data(2,:);
     UKF_bias_z(:,i) = simResults.gyro_bias.Data(3,:);
-
+    
+    N(i) = i;
  end
 
 %Data processing
@@ -232,4 +233,4 @@ for k =1:n
     UKF_average_magnitude_bias(k,3) = sqrt(mean(UKF_bias_z(:,k).^2 ));   
 end
 
-save('UKF_Monte_Carlo_n100.mat');
+save('UKF_Monte_Carlo_n25.mat');

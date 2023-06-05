@@ -34,10 +34,10 @@ N_orbits = 1;
 %Torbit=90*60;       %1 orbit approx. 90 minutes
 Torbit=2*pi*sqrt(orbit.a^3/(3.986004418E5));
 %tsimulation=60*45;   %in [s] 1 orbit
-tsimulation=N_orbits*Torbit;
+t_sim =N_orbits*Torbit;
 %tsimulation=10000;
 %tsimulation=2700;
-delta_t = 1; %simulation time step (seconds)
+TimeStep = 1; %simulation time step (seconds)
 
 %%% MAGNETIC FIELD MODELS - GET PROPER IGRF COEFFICIENTS %%%
 date_IGRF = [date.year,date.month,date.day];
@@ -133,7 +133,7 @@ Vcss=0.01745^2;
 
 
 %% Monte Carlo simulation
-n = 100; % number of simulation, take around 12 minutes for n=10
+n = 25; % number of simulation, take around 12 minutes for n=10
 
 %initialize lists of data
 n_points = round(tsimulation) + 1; % number of points to save per simulations
@@ -197,6 +197,8 @@ for i = 1:n
     MEKF_bias_x(:,i) = simResults.gyro_bias.Data(1,:);
     MEKF_bias_y(:,i) = simResults.gyro_bias.Data(2,:);
     MEKF_bias_z(:,i) = simResults.gyro_bias.Data(3,:);
+    
+    N(i) = i;
 
  end
 
@@ -232,4 +234,4 @@ for k =1:n
     MEKF_average_magnitude_bias(k,3) = sqrt(mean(MEKF_bias_z(:,k).^2 ));   
 end
 
-save('MEKF_Monte_Carlo_n100.mat');
+save('MEKF_Monte_Carlo_n25.mat');
