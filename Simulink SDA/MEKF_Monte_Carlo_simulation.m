@@ -136,7 +136,7 @@ Vcss=0.01745^2;
 n = 25; % number of simulation, take around 12 minutes for n=10
 
 %initialize lists of data
-n_points = round(tsimulation) + 1; % number of points to save per simulations
+n_points = round(t_sim) + 1; % number of points to save per simulations
 
 GYRO_sigma = zeros(1,n);
 Gyro_bias = zeros(1,n);
