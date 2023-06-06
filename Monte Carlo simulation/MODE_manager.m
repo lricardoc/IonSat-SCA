@@ -15,7 +15,6 @@ orbit.sun_ECI_0 = (planetEphemeris(juliandate(date.year,date.month,date.day),'Ea
 orbit.sun_ECI_0 = orbit.sun_ECI_0/norm(orbit.sun_ECI_0);   %get unit vector
 
 %POINTING MODE
-MODE = 4;   
 MODE_SEQUENCE = [MODE;MODE;MODE];
 if MODE == 1 %"orbital" 
     % Reference quaternion is aligned with ORF. 

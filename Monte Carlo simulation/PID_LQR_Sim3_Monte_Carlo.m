@@ -127,7 +127,7 @@ for i = 1:n
     MODE_SEQUENCE = randperm(5,3); %generate 3 diferrent radom values between 1 and 5; their are 5!/(5-3)!= 60 possible combinations
 
     MODE = MODE_SEQUENCE(1);
-    MODE_manager_bis;
+    MODE_manager;
 
     % generate random number between -180 and +180     
     att.alpha = 360*rand - 180;   % Yaw  
