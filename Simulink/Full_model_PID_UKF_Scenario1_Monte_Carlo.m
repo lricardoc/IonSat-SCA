@@ -1,4 +1,5 @@
-%% Clear workspace and figures
+%% PID UKF Scenario1 : Robustness to the inertia varation
+
 clear all
 close all
 clc
@@ -17,145 +18,14 @@ load('workspace.mat')
 %Not necessary while perturbations not implemented
 load('LOAS.mat')
 
-%% Orbit and attitude parameters
-%Orbit: Initialisation of Keplerian parameters
-orbit.a = 6678;     %semimajor axis [km]
-orbit.e = 0.001;     %eccentricity
-orbit.i = 51.6;     %inclination [degrees]
-orbit.O = 146;      %Right ascension of the right ascending node [degrees] %max 197, min 300.5 %181
-orbit.o = 344;      %Argument of the perigee [degrees]                      %max 90, min 0      %90
-orbit.nu = 0;       %True anomaly [degrees]
-
-%Initialisation of date
-date.year = 2022;
-date.month = 1;
-date.day = 1;
-date.hours = 0;
-date.minutes = 0;
-date.seconds = 0;
-
-
-
-
-%Get initial position and velocity
-[orbit.r,orbit.v] = orb2rv_init(orbit.a,orbit.e,orbit.i*pi/180,orbit.O*pi/180,orbit.o*pi/180,orbit.nu*pi/180,0,0,0);
-%Get Sun initial direction
-%Implement the position of the Sun with respect to the Earth for initialization date with DE405.
-orbit.sun_ECI_0 = (planetEphemeris(juliandate(date.year,date.month,date.day),'Earth','Sun'))';
-orbit.sun_ECI_0 = orbit.sun_ECI_0/norm (orbit.sun_ECI_0);   %get unit vector
-
-%POINTING MODE
-MODE = 4;   %"sun-aero" pointing mode
-% 1: "orbital" Reference quaternion is aligned with ORF. 
-% 2: "sun-aero" Reference quaternion is such that x is aligned with velocity 
-%and z is aligned as best as possible with the sun direction to maximize the power generation 
-% 3: "sun pointing" Reference quaternion is such that z is aligned with with 
-%the sun direction to maximize the power generation and x is aligned as best 
-%as possible with the velocity direction. 
-% 4: "aero-drag" Reference quaternion is similar than in Case 1, but rotated 
-%90° along the y axis, therefore, the reference quaternion is an attitude for 
-%maximizing the drag surface. 
-% 5: "retrogade firing" Reference quaternion is similar than in Case 1, but 
-%rotated 180° along the z axis, therefore, the reference quaternion is an 
-%attitude for retrograde propulsion. (??should be like case 2 but rotated?)
-% 6: Reference quaternion is static [1 0 0 0], but this time is the only case 
-%where the state of the B-dot is enabled (1). 
-% 7: Reference quaternion is a custom quaternion that has to be defined by the 
-%user as an input to the mission block. 
-% 8: "sun-drag" Reference quaternion is such that z is aligned with 
-%the velocity direction to maximize the drag and x is aligned as best 
-%as possible with the velocity direction. 
-
-if MODE == 1
-    x_sa = orbit.v/norm(orbit.v);
-    z_sa = orbit.r/norm(orbit.r);
-    y_sa = -cross(x_sa,z_sa);
-    DCM_orb = horzcat(x_sa,y_sa,z_sa);
-    q_s2o = dcm2quat(DCM_orb);
-    att.q_i2r = (quatinv (q_s2o))';
-end
-
-if MODE == 2
-    x_sa = orbit.v/norm(orbit.v);
-    z_sa = orbit.sun_ECI_0 - dot(x_sa,orbit.sun_ECI_0)*x_sa;
-    z_sa = z_sa/norm(z_sa);
-    y_sa = cross(z_sa,x_sa);
-    DCM_sa = horzcat(x_sa,y_sa,z_sa);
-    q_s2i = dcm2quat(DCM_sa);
-    att.q_i2r = (quatinv(q_s2i))';
-end
-
-if MODE == 3
-    z_sa = orbit.sun_ECI_0/norm(orbit.sun_ECI_0);
-    x_sa = dot(orbit.v,z_sa)*z_sa - orbit.v;
-    x_sa = x_sa/norm(x_sa);
-    y_sa = cross(z_sa,x_sa);
-    DCM_sa=horzcat(x_sa,y_sa,z_sa);
-    q_s2i = dcm2quat(DCM_sa);
-    att.q_i2r = (quatinv (q_s2i))';
-end
-
-if MODE == 4
-    x_sa = orbit.r/norm(orbit.r);
-    z_sa = orbit.v/norm(orbit.v);
-    y_sa = cross(z_sa,x_sa);
-    DCM_sa=horzcat(x_sa,y_sa,z_sa);
-    q_s2i = dcm2quat(DCM_sa);
-    att.q_i2r = (quatinv (q_s2i))';
-end
-
-if MODE == 5
-    x_sa = - orbit.v/norm(orbit.v);
-    z_sa = orbit.sun_ECI_0 - dot(x_sa,orbit.sun_ECI_0)*x_sa;
-    z_sa = z_sa/norm(z_sa);
-    y_sa = cross(z_sa,x_sa);
-    DCM_sa = horzcat(x_sa,y_sa,z_sa);
-    q_s2i = dcm2quat(DCM_sa);
-    att.q_i2r = (quatinv(q_s2i))';
-end
-
-if MODE == 6
-    att.q_i2r = [1 0 0 0];
-end
-
-if MODE == 7
-    prompt = "What is the desired quaternion value? ";
-    att.q_i2r = input(prompt);
-end
-
-if MODE == 8
-    z_sa = orbit.sun_ECI_0/norm(orbit.sun_ECI_0);
-    nadir = - orbit.r/norm(orbit.r);
-    x_sa = dot(nadir,z_sa)*z_sa - nadir;
-    x_sa = x_sa/norm(x_sa);
-    y_sa = cross(z_sa,x_sa);
-    DCM_sa=horzcat(x_sa,y_sa,z_sa);
-    q_s2i = dcm2quat(DCM_sa);
-    att.q_i2r = (quatinv (q_s2i))';
-end
-
-
-%Attitude: Initialisation of angles and rotational speeds:
-%Initial orientation in ZYX (alpha,beta,gamma) Euler angles [degrees]
-att.alpha = 40;     
-att.beta = -10;
-att.gamma = 60;
-
-%Initial angular velocities in each axis (x,y,z) of body frame [degrees/sec]
-att.wx0 = -0.01;        
-att.wy0 = 0.01;
-att.wz0 = 0.01;
 
 %% Declare variables
 %time step based on gyro sampling frequency: 
-%TimeStep = 0.25;        %fixed-step size in solver, Default time step=0.25
-TimeStep = 0.5;        %fixed-step size in solver, Default time step=0.25
+TimeStep = 1;        %fixed-step size in solver, Default time step=0.25
 Torbit=2*pi*sqrt((orbit.a)^3/(3.986004418E5));
-N_orbits = 3;           %number of orbits to be simulated
-%Time spent performing the simulation in seconds (one orbit is ~5400 s):
+N_orbits = 1;           %number of orbits to be simulated
 t_sim = N_orbits*Torbit;
-%t_sim = 10800;
-%OrbitSize = 5400;
+
 
 %% Other blocks configuration
 %Determine the order of approximation for IGRF model of the earth's
@@ -170,10 +40,9 @@ Use_IGRF_KF = 1;
 %Decide whether you'd like to use control or not
 %A value of 1 (True) entails that you'd like to simulate a realistic model
 %for the control system, and 0 (False) means you assume ideal no control conditions
-Enable_control = 0;
+% Enable_control = 1;
 %Enable whether the sensors are considering eclipses or not
 Enable_eclipse = 1;
-
 
 
 
@@ -182,17 +51,17 @@ global dt Tss Ts q_hat0 b_hat0 W6x6 Vmtm Vfss Vcss
 %global PSDgyro PSDmtm PSDfss PSDcss PSDbias
 %Sensor parameters
 %Sampling times:
-Tss=0.5;         %sampling time for MTM, FSS, CSS could be 1 not 0.5
-Ts=0.5;          %sampling time for Gyro
+Tss=1;         %sampling time for MTM, FSS, CSS could be 1 not 0.5
+Ts=1;          %sampling time for Gyro
 %Sensor Noises
 %a) Magnetometer (MTM)
 sat.sensors.mag_sigma=5.0e-08;
 PSDmtm=sat.sensors.mag_sigma^2*Tss;
 %b) Gyrometer 
 sat.sensors.gyro_sigma=2.620e-04; %original value
-%sat.sensors.gyro_sigma=0.2e-04; %to test
+sat.sensors.gyro_sigma=0.2e-04; %to test
 sat.sensors.gyro_bias=1.160e-04; %original value
-%sat.sensors.gyro_bias=0.160e-05; %to test
+sat.sensors.gyro_bias=0.160e-05; %to test
 PSDgyro=sat.sensors.gyro_sigma^2*Ts;
 PSDbias=sat.sensors.gyro_bias^2*Ts;
 b_offset=2e-4;
@@ -267,13 +136,9 @@ Vcss=0.01745^2;
 
 
 %Define initial values for Kalman filter parameters
-%x0 = [0.207740030841190 0.530411062089572 -0.675665322016929 0.467957858597196 1e-3 1e-3 1e-3];
-x0 = [0.001 0.001 -0.001 0.001 1e-3 1e-3 1e-3];
-
+x0 = [0.207740030841190 0.530411062089572 -0.675665322016929 0.467957858597196 1e-3 1e-3 1e-3];
 P0 = diag([1e-5 1e-5 1e-5 1e-5 1e-5 1e-5]);
-%What0 = [-8.56493764825016e-05 -0.000707789025389356 -0.000815029912348624];
-What0 = [-1e-05 -0.0001 -0.001];
-
+What0 = [-8.56493764825016e-05 -0.000707789025389356 -0.000815029912348624];
 %Identity matrix with same number of dimensions as P
 CovId = eye(6);
 
@@ -315,6 +180,9 @@ IonSataero.Tz = SNAP_aeromodel.T_z;
 IonSataero.av_density_vs_alt = SNAP_aeromodel.av_density_vs_alt;
 IonSataero.alt_range = SNAP_aeromodel.alt_range;
 
+%% Thruster activation
+thruster_on_off = 0;
+
 %Thruster direction and activation:
 sat.thruster.force=0.00075; % Force of thruster in [N]
 d=1*pi/180;           %deviation in rads of the thruster wrt to x axis in plane XY
@@ -337,25 +205,161 @@ sat.thruster.firstimpulse=4000;     %first thrust after start sim in [s]
                                     %needs to be less than waiting time
 sat.thruster.Nfirings=3;            %number of thrust firings
 
-%% Controller
-%LDR controller feedback gain
-K = [0.00053417  0  0  0.0070506  0  0;
-    0  0.00071733 0  0  0.00840481  0;
-    0  0  0.00081350 0  0  0.010476]; %q=0.004 r=4000
 
-%choose the controller to use : if PID then controller=1, 
-%if LQR then controller=0
-controller = 1;
 
-%choose the kalman filter : if UKF then  Kalman_filter = 1,
-%if MEKF then  Kalman_filter = 0,
-Kalman_filter = 0;
 
-% %% Open the simulink model
-% IonSatSimulationF
+
+%% Monte Carlo simulation
+n = 100; % number of simulation, take around 12 minutes for n=10
+
+%initialize lists of data
+n_points = round(t_sim) + 1; % number of points to save per simulations
+
+Alpha0 = zeros(1,n);
+Beta0 = zeros(1,n);
+Gamma0 = zeros(1,n);
+WX0 = zeros(1,n);
+WY0 = zeros(1,n);
+WZ0 = zeros(1,n);
+N = zeros(1,n);
+
+PID_angle_error_rate_x = zeros(n_points,n);
+PID_angle_error_rate_y = zeros(n_points,n);
+PID_angle_error_rate_z = zeros(n_points,n);
+
+PID_angular_velocity_error_rate_x = zeros(n_points,n);
+PID_angular_velocity_error_rate_y = zeros(n_points,n);
+PID_angular_velocity_error_rate_z = zeros(n_points,n);
+
+PID_total_power_consumption = zeros(n_points,n);
+
+PID_RW1_speed_command = zeros(n_points,n);
+PID_RW2_speed_command = zeros(n_points,n);
+PID_RW3_speed_command = zeros(n_points,n);
+PID_RW4_speed_command = zeros(n_points,n);
+
+PID_RW1_control_torque = zeros(n_points,n);
+PID_RW2_control_torque = zeros(n_points,n);
+PID_RW3_control_torque = zeros(n_points,n);
+PID_RW4_control_torque = zeros(n_points,n);
+
+PID_RW_saturation_duration = zeros(4,n);
+
+% Orbit_altitude = zeros(1,n);
 % 
-% %% Load the simulink model
-% load_system("IonSatSimulationF.slx")
-% 
-% %% Run the simulink 
-% simOut = sim("IonSatSimulationF");
+Inertia =  zeros(6,n);
+
+I_xx =  0.0702;
+I_yy =  0.113;
+I_zz =  0.16;
+I_xy =  0.0017;
+I_xz = -0.0023;
+I_yz = -0.0003;
+sat.inertia = [I_xx I_xy I_xz;
+               I_xy I_yy I_yz;
+               I_xz I_yz I_zz];
+for i = 1:n
+    % Add noise to initial conditions
+    %Randomize IONSat's inertia at -+20% of the fixed inertia
+    I_xx =  0.0702*8/10 + 0.0702*rand*2/5;
+    I_yy =  0.113*810 + 0.113*rand*2/5;
+    I_zz =  0.16*8/10 + 0.16*rand*2/5;
+    I_xy =  0.0017*8/10 + 0.0017*rand*2/5;
+    I_xz = -0.0023*8/10 + 0.0023*rand*2/5;
+    I_yz = -0.0003*8/10 + 0.0003*rand*2/5;
+    sat_inertia = [I_xx I_xy I_xz;
+                   I_xy I_yy I_yz;
+                   I_xz I_yz I_zz];
+
+
+
+     %Orbit: Initialisation of Keplerian parameters
+    orbit.a = 6378+300;
+    orbit.e = 0.001;    %eccentricity
+    orbit.i = 98;     %inclination [degrees]
+    orbit.O = 10;      %Right ascension of the right ascending node [degrees] %max 197, min 300.5 %181
+    orbit.o = 90;      %Argument of the perigee [degrees]                      %max 90, min 0      %90
+    orbit.nu = 0;       %True anomaly [degrees]
+    
+    MODE = 4;
+    MODE_manager;
+    
+    %intial angles
+    att.alpha = 1;   % Yaw  
+    att.beta = -1;     % Pitch   
+    att.gamma = 1;    % Roll   
+
+    %Initial angular velocities in each axis (x,y,z) of body frame [degrees/sec]
+    att.wx0 = 0.1;    
+    att.wy0 = -0.1;
+    att.wz0 = 0.1;
+
+    %Save the inital conditions
+    Alpha0(i) = att.alpha;
+    Beta0(i) = att.beta;
+    Gamma0(i) = att.gamma;
+    WX0(i) = att.wx0;
+    WY0(i) = att.wy0;
+    WZ0(i) = att.wz0;
+    N(i)=i;
+%     Orbit_altitude(i) = orbit.a - 6378;
+    
+    Inertia(1,i) = I_xx;
+    Inertia(2,i) = I_yy;
+    Inertia(3,i) = I_zz;
+    Inertia(4,i) = I_xy;
+    Inertia(5,i) = I_xz;
+    Inertia(6,i) = I_yz;
+
+
+    % run the simulink 
+    simResults = sim('IonSatSimulationF_UKF.slx');
+    
+    
+    %save the data
+    PID_angle_error_rate_x(:,i) = simResults.angle_error_rate.Data(:,1);
+    PID_angle_error_rate_y(:,i) = simResults.angle_error_rate.Data(:,2);
+    PID_angle_error_rate_z(:, i) = simResults.angle_error_rate.Data(:,3);
+
+    PID_angular_velocity_error_rate_x(:,i) = simResults.angular_velocities_error_rate.Data(1,:);
+    PID_angular_velocity_error_rate_y(:,i) = simResults.angular_velocities_error_rate.Data(2,:);
+    PID_angular_velocity_error_rate_z(:,i) = simResults.angular_velocities_error_rate.Data(3,:);
+
+    PID_total_power_consumption(:,i) = simResults.RW_total_power_consumption.Data(:);
+
+    PID_RW1_speed_command(:,i) = simResults.RW_speed_command.Data(1,:);
+    PID_RW2_speed_command(:,i) = simResults.RW_speed_command.Data(2,:);
+    PID_RW3_speed_command(:,i) = simResults.RW_speed_command.Data(3,:);
+    PID_RW4_speed_command(:,i) = simResults.RW_speed_command.Data(4,:);
+
+    PID_RW1_control_torque(:,i) = simResults.RW_control_torque.Data(1,:);
+    PID_RW2_control_torque(:,i) = simResults.RW_control_torque.Data(2,:);
+    PID_RW3_control_torque(:,i) = simResults.RW_control_torque.Data(3,:);
+    PID_RW4_control_torque(:,i) = simResults.RW_control_torque.Data(4,:);
+
+    PID_RW_saturation_duration(:,i) = simResults.RW_saturation_time.Data(n_points,:);
+end
+
+%Data processing
+PID_average_magnitude_angle_error = zeros(n,3);
+
+PID_average_magnitude_angular_velocities_error = zeros(n,3);
+
+PID_RW_average_power_consumtion = zeros(1,n);
+
+for k =1:n
+    %Compute the average magnitude (RMS) of the angle error
+    PID_average_magnitude_angle_error(k,1) = sqrt(mean(PID_angle_error_rate_x(:,k).^2 ));
+    PID_average_magnitude_angle_error(k,2) = sqrt(mean(PID_angle_error_rate_y(:,k).^2 ));
+    PID_average_magnitude_angle_error(k,3) = sqrt(mean(PID_angle_error_rate_z(:,k).^2 ));
+
+    %Compute the average magnitude (RMS) of the angular velocities error
+    PID_average_magnitude_angular_velocities_error(k,1) = sqrt(mean(PID_angular_velocity_error_rate_x(:,k).^2 ));
+    PID_average_magnitude_angular_velocities_error(k,2) = sqrt(mean(PID_angular_velocity_error_rate_y(:,k).^2 ));
+    PID_average_magnitude_angular_velocities_error(k,3) = sqrt(mean(PID_angular_velocity_error_rate_z(:,k).^2 ));
+
+    % compute the average totalt power consumption of the RW
+    PID_RW_average_power_consumtion(k) = mean(PID_total_power_consumption(:,k));
+end
+save('PID_UKF_scenario1_inertia_pm20_n100.mat');
+
