@@ -238,6 +238,8 @@ I_yz = -0.0003;
 sat.inertia = [I_xx I_xy I_xz;
                I_xy I_yy I_yz;
                I_xz I_yz I_zz];
+sat_inertia = sat.inertia;
+
 for i = 1:n
     % Add noise to initial conditions
     %Randomize IONSat's inertia at -+20% of the fixed inertia

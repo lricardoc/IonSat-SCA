@@ -243,6 +243,18 @@ PID_RW_saturation_duration = zeros(4,n);
 
 Mode_sequence = zeros(3,n);
 
+I_xx =  0.0702;
+I_yy =  0.113;
+I_zz =  0.16;
+I_xy =  0.0017;
+I_xz = -0.0023;
+I_yz = -0.0003;
+sat.inertia = [I_xx I_xy I_xz;
+               I_xy I_yy I_yz;
+               I_xz I_yz I_zz];
+sat_inertia = sat.inertia;
+
+
 for i = 1:n
     % Add noise to initial conditions
 
