@@ -221,6 +221,76 @@ PID_RW4_control_torque = zeros(n_points,n);
 
 PID_RW_saturation_duration = zeros(4,n);
  
+
+Q_real_0 = zeros(n_points,n);
+Q_real_1 = zeros(n_points,n);
+Q_real_2 = zeros(n_points,n);
+Q_real_3 = zeros(n_points,n);
+
+Q_estimated_0 = zeros(n_points,n);
+Q_estimated_1 = zeros(n_points,n);
+Q_estimated_2 = zeros(n_points,n);
+Q_estimated_3 = zeros(n_points,n);
+
+
+Q_reference_0 = zeros(n_points,n);
+Q_reference_1 = zeros(n_points,n);
+Q_reference_2 = zeros(n_points,n);
+Q_reference_3 = zeros(n_points,n);
+
+
+Attitude_real_x = zeros(n_points,n);
+Attitude_real_y = zeros(n_points,n);
+Attitude_real_z = zeros(n_points,n);
+
+Attitude_estimated_x = zeros(n_points,n);
+Attitude_estimated_y = zeros(n_points,n);
+Attitude_estimated_z = zeros(n_points,n);
+
+Attitude_reference_x = zeros(n_points,n);
+Attitude_reference_y = zeros(n_points,n);
+Attitude_reference_z = zeros(n_points,n);
+
+Attitude_real_vs_estimated_x = zeros(n_points,n);
+Attitude_real_vs_estimated_y = zeros(n_points,n);
+Attitude_real_vs_estimated_z = zeros(n_points,n);
+
+Attitude_real_vs_reference_x = zeros(n_points,n);
+Attitude_real_vs_reference_y = zeros(n_points,n);
+Attitude_real_vs_reference_z = zeros(n_points,n);
+
+Attitude_estimated_vs_reference_x = zeros(n_points,n);
+Attitude_estimated_vs_reference_y = zeros(n_points,n);
+Attitude_estimated_vs_reference_z = zeros(n_points,n);
+
+
+
+Angular_velocity_real_x = zeros(n_points,n);
+Angular_velocity_real_y = zeros(n_points,n);
+Angular_velocity_real_z = zeros(n_points,n);
+
+Angular_velocity_estimated_x = zeros(n_points,n);
+Angular_velocity_estimated_y = zeros(n_points,n);
+Angular_velocity_estimated_z = zeros(n_points,n);
+
+Angular_velocity_reference_x = zeros(n_points,n);
+Angular_velocity_reference_y = zeros(n_points,n);
+Angular_velocity_reference_z = zeros(n_points,n);
+
+Angular_velocity_real_vs_estimated_x = zeros(n_points,n);
+Angular_velocity_real_vs_estimated_y = zeros(n_points,n);
+Angular_velocity_real_vs_estimated_z = zeros(n_points,n);
+
+Angular_velocity_real_vs_reference_x = zeros(n_points,n);
+Angular_velocity_real_vs_reference_y = zeros(n_points,n);
+Angular_velocity_real_vs_reference_z = zeros(n_points,n);
+
+Angular_velocity_estimated_vs_reference_x = zeros(n_points,n);
+Angular_velocity_estimated_vs_reference_y = zeros(n_points,n);
+Angular_velocity_estimated_vs_reference_z = zeros(n_points,n);
+
+
+
 PID_initial_date = zeros(3,n);
 
 PID_rotation_thrust_deviation = zeros(1,n);
@@ -343,16 +413,83 @@ for i = 1:n
     PID_Thrust_application_point(:,i) = transpose(sat.thruster.point);
 
     PID_RAAN_ArgumentPeriapsis_TrueAnomaly(:,i) = [orbit.O; orbit.o; orbit.nu];
+    
+
+    Q_real_0(:,i) = simResults.q_real.Data(:,1);
+    Q_real_1(:,i) = simResults.q_real.Data(:,2);
+    Q_real_2(:,i) = simResults.q_real.Data(:,3);
+    Q_real_3(:,i) = simResults.q_real.Data(:,4);
+
+    Q_estimated_0(:,i) = simResults.q_estimated.Data(:,1);
+    Q_estimated_1(:,i) = simResults.q_estimated.Data(:,2);
+    Q_estimated_2(:,i) = simResults.q_estimated.Data(:,3);
+    Q_estimated_3(:,i) = simResults.q_estimated.Data(:,4);
+
+
+    Q_reference_0(:,i) = simResults.q_ref.Data(1,:);
+    Q_reference_1(:,i) = simResults.q_ref.Data(2,:);
+    Q_reference_2(:,i) = simResults.q_ref.Data(3,:);
+    Q_reference_3(:,i) = simResults.q_ref.Data(4,:);   
+    
+    Angular_velocity_real_x(:,i) = rad2deg(simResults.w_real.Data(1,:));
+    Angular_velocity_real_y(:,i) = rad2deg(simResults.w_real.Data(2,:));
+    Angular_velocity_real_z(:,i) = rad2deg(simResults.w_real.Data(3,:));
+
+    Angular_velocity_estimated_x(:,i) = rad2deg(simResults.w_estimated.Data(:,1));
+    Angular_velocity_estimated_y(:,i) = rad2deg(simResults.w_estimated.Data(:,2));
+    Angular_velocity_estimated_z(:,i) = rad2deg(simResults.w_estimated.Data(:,3));
+
+    Angular_velocity_reference_x(:,i) = rad2deg(simResults.w_ref.Data(:,1));
+    Angular_velocity_reference_y(:,i) = rad2deg(simResults.w_ref.Data(:,2));
+    Angular_velocity_reference_z(:,i) = rad2deg(simResults.w_ref.Data(:,3));
+    
+    Angular_velocity_real_vs_estimated_x(:,i) = Angular_velocity_real_x(:,i) - Angular_velocity_estimated_x(:,i);
+    Angular_velocity_real_vs_estimated_y(:,i) = Angular_velocity_real_y(:,i) - Angular_velocity_estimated_y(:,i);
+    Angular_velocity_real_vs_estimated_z(:,i) = Angular_velocity_real_z(:,i) - Angular_velocity_estimated_z(:,i);
+
+    Angular_velocity_real_vs_reference_x(:,i) = Angular_velocity_real_x(:,i) - Angular_velocity_reference_x(:,i);
+    Angular_velocity_real_vs_reference_y(:,i) = Angular_velocity_real_y(:,i) - Angular_velocity_reference_y(:,i);
+    Angular_velocity_real_vs_reference_z(:,i) = Angular_velocity_real_z(:,i) - Angular_velocity_reference_z(:,i);
+
+    Angular_velocity_estimated_vs_reference_x(:,i) = Angular_velocity_estimated_x(:,i) - Angular_velocity_reference_x(:,i);
+    Angular_velocity_estimated_vs_reference_y(:,i) = Angular_velocity_estimated_y(:,i) - Angular_velocity_reference_y(:,i);
+    Angular_velocity_estimated_vs_reference_z(:,i) = Angular_velocity_estimated_z(:,i) - Angular_velocity_reference_z(:,i);
 end
 
-%Data processing
+%% Data processing
 PID_average_magnitude_angle_error = zeros(n,3);
 
 PID_average_magnitude_angular_velocities_error = zeros(n,3);
 
 PID_RW_average_power_consumtion = zeros(1,n);
 
+Attitude_average_mangnitude_real_vs_estimated = zeros(n,3);
+Attitude_average_mangnitude_real_vs_reference = zeros(n,3);
+Attitude_average_mangnitude_estimated_vs_reference = zeros(n,3);
+
+Angular_velocity_average_mangnitude_real_vs_estimated = zeros(n,3);
+Angular_velocity_average_mangnitude_real_vs_reference = zeros(n,3);
+Angular_velocity_average_mangnitude_estimated_vs_reference = zeros(n,3);
+
 for k =1:n
+    for j=1:n_points 
+    Euler_real = Quat2Euler([Q_real_0(j,k) Q_real_1(j,k) Q_real_2(j,k) Q_real_3(j,k)]);
+    Attitude_real_x(j,k) = Euler_real(1);
+    Attitude_real_y(j,k) = Euler_real(2);
+    Attitude_real_z(j,k) = Euler_real(3);
+    
+    Euler_estimated = Quat2Euler([Q_estimated_0(j,k) Q_estimated_1(j,k) Q_estimated_2(j,k) Q_estimated_3(j,k)]);
+    Attitude_estimated_x(j,k) = Euler_estimated(1);
+    Attitude_estimated_y(j,k) = Euler_estimated(2);
+    Attitude_estimated_z(j,k) = Euler_estimated(3);
+       
+    Euler_reference = Quat2Euler([Q_reference_0(j,k) Q_reference_1(j,k) Q_reference_2(j,k) Q_reference_3(j,k)]);
+    Attitude_reference_x(j,k) = Euler_reference(1);
+    Attitude_reference_y(j,k) = Euler_reference(2);
+    Attitude_reference_z(j,k) = Euler_reference(3);
+    end
+    
+    
     %Compute the average magnitude (RMS) of the angle error
     PID_average_magnitude_angle_error(k,1) = sqrt(mean(PID_angle_error_rate_x(:,k).^2 ));
     PID_average_magnitude_angle_error(k,2) = sqrt(mean(PID_angle_error_rate_y(:,k).^2 ));
@@ -365,5 +502,48 @@ for k =1:n
 
     % compute the average totalt power consumption of the RW
     PID_RW_average_power_consumtion(k) = mean(PID_total_power_consumption(:,k));
+ 
+    Attitude_real_vs_estimated_x(:,k) = Attitude_real_x(:,k) - Attitude_estimated_x(:,k);
+    Attitude_real_vs_estimated_y(:,k) = Attitude_real_y(:,k) - Attitude_estimated_y(:,k);
+    Attitude_real_vs_estimated_z(:,k) = Attitude_real_z(:,k) - Attitude_estimated_z(:,k);
+
+    Attitude_real_vs_reference_x(:,k) = Attitude_real_x(:,k) - Attitude_reference_x(:,k);
+    Attitude_real_vs_reference_y(:,k) = Attitude_real_y(:,k) - Attitude_reference_y(:,k);
+    Attitude_real_vs_reference_z(:,k) = Attitude_real_z(:,k) - Attitude_reference_z(:,k);
+
+    Attitude_estimated_vs_reference_x(:,k) = Attitude_estimated_x(:,k) - Attitude_reference_x(:,k);
+    Attitude_estimated_vs_reference_y(:,k) = Attitude_estimated_y(:,k) - Attitude_reference_y(:,k);
+    Attitude_estimated_vs_reference_z(:,k) = Attitude_estimated_z(:,k) - Attitude_reference_z(:,k);
+ 
+    %Compute the average magnitude (RMS) real attitude vs estimated
+    Attitude_average_mangnitude_real_vs_estimated(k,1) = sqrt(mean(Attitude_real_vs_estimated_x(:,k).^2 ));
+    Attitude_average_mangnitude_real_vs_estimated(k,2) = sqrt(mean(Attitude_real_vs_estimated_y(:,k).^2 ));
+    Attitude_average_mangnitude_real_vs_estimated(k,3) = sqrt(mean(Attitude_real_vs_estimated_z(:,k).^2 ));
+    
+    %Compute the average magnitude (RMS) real attitude vs reference
+    Attitude_average_mangnitude_real_vs_reference(k,1) = sqrt(mean(Attitude_real_vs_reference_x(:,k).^2 ));
+    Attitude_average_mangnitude_real_vs_reference(k,2) = sqrt(mean(Attitude_real_vs_reference_y(:,k).^2 ));
+    Attitude_average_mangnitude_real_vs_reference(k,3) = sqrt(mean(Attitude_real_vs_reference_z(:,k).^2 ));
+   
+    %Compute the average magnitude (RMS) estimated attitude vs reference
+    Attitude_average_mangnitude_estimated_vs_reference(k,1) = sqrt(mean(Attitude_estimated_vs_reference_x(:,k).^2 ));
+    Attitude_average_mangnitude_estimated_vs_reference(k,2) = sqrt(mean(Attitude_estimated_vs_reference_y(:,k).^2 ));
+    Attitude_average_mangnitude_estimated_vs_reference(k,3) = sqrt(mean(Attitude_estimated_vs_reference_z(:,k).^2 ));    
+
+    
+    %Compute the average magnitude (RMS) real Angular_velocity vs estimated
+    Angular_velocity_average_mangnitude_real_vs_estimated(k,1) = sqrt(mean(Angular_velocity_real_vs_estimated_x(:,k).^2 ));
+    Angular_velocity_average_mangnitude_real_vs_estimated(k,2) = sqrt(mean(Angular_velocity_real_vs_estimated_y(:,k).^2 ));
+    Angular_velocity_average_mangnitude_real_vs_estimated(k,3) = sqrt(mean(Angular_velocity_real_vs_estimated_z(:,k).^2 ));
+    
+    %Compute the average magnitude (RMS) real Angular_velocity vs reference
+    Angular_velocity_average_mangnitude_real_vs_reference(k,1) = sqrt(mean(Angular_velocity_real_vs_reference_x(:,k).^2 ));
+    Angular_velocity_average_mangnitude_real_vs_reference(k,2) = sqrt(mean(Angular_velocity_real_vs_reference_y(:,k).^2 ));
+    Angular_velocity_average_mangnitude_real_vs_reference(k,3) = sqrt(mean(Angular_velocity_real_vs_reference_z(:,k).^2 ));
+   
+    %Compute the average magnitude (RMS) estimated Angular_velocity vs reference
+    Angular_velocity_average_mangnitude_estimated_vs_reference(k,1) = sqrt(mean(Angular_velocity_estimated_vs_reference_x(:,k).^2 ));
+    Angular_velocity_average_mangnitude_estimated_vs_reference(k,2) = sqrt(mean(Angular_velocity_estimated_vs_reference_y(:,k).^2 ));
+    Angular_velocity_average_mangnitude_estimated_vs_reference(k,3) = sqrt(mean(Angular_velocity_estimated_vs_reference_z(:,k).^2 ));     
 end
 save('PID_UKF_scenario2_6orbit_3thrust_n100.mat');
