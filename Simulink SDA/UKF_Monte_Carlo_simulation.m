@@ -133,7 +133,7 @@ Vcss=0.01745^2;
 
 
 %% Monte Carlo simulation
-n = 25; % number of simulation, take around 12 minutes for n=10
+n = 2; % number of simulation, take around 12 minutes for n=10
 
 %initialize lists of data
 n_points = round(t_sim) + 1; % number of points to save per simulations
@@ -151,15 +151,64 @@ UKF_angular_velocity_error_rate_x = zeros(n_points,n);
 UKF_angular_velocity_error_rate_y = zeros(n_points,n);
 UKF_angular_velocity_error_rate_z = zeros(n_points,n);
 
-UKF_angle_estimation_error_x = zeros(n_points,n);
-UKF_angle_estimation_error_y = zeros(n_points,n);
-UKF_angle_estimation_error_z = zeros(n_points,n);
+% UKF_angle_estimation_error_x = zeros(n_points,n);
+% UKF_angle_estimation_error_y = zeros(n_points,n);
+% UKF_angle_estimation_error_z = zeros(n_points,n);
 
 UKF_bias_x = zeros(n_points,n);
 UKF_bias_y = zeros(n_points,n);
 UKF_bias_z = zeros(n_points,n);
 
 
+Q_real_0 = zeros(n_points,n);
+Q_real_1 = zeros(n_points,n);
+Q_real_2 = zeros(n_points,n);
+Q_real_3 = zeros(n_points,n);
+
+Q_estimated_0 = zeros(n_points,n);
+Q_estimated_1 = zeros(n_points,n);
+Q_estimated_2 = zeros(n_points,n);
+Q_estimated_3 = zeros(n_points,n);
+
+
+Q_reference_0 = zeros(n_points,n);
+Q_reference_1 = zeros(n_points,n);
+Q_reference_2 = zeros(n_points,n);
+Q_reference_3 = zeros(n_points,n);
+
+
+Attitude_real_x = zeros(n_points,n);
+Attitude_real_y = zeros(n_points,n);
+Attitude_real_z = zeros(n_points,n);
+
+Attitude_estimated_x = zeros(n_points,n);
+Attitude_estimated_y = zeros(n_points,n);
+Attitude_estimated_z = zeros(n_points,n);
+
+Attitude_reference_x = zeros(n_points,n);
+Attitude_reference_y = zeros(n_points,n);
+Attitude_reference_z = zeros(n_points,n);
+
+Attitude_real_vs_estimated_x = zeros(n_points,n);
+Attitude_real_vs_estimated_y = zeros(n_points,n);
+Attitude_real_vs_estimated_z = zeros(n_points,n);
+
+
+Angular_velocity_real_x = zeros(n_points,n);
+Angular_velocity_real_y = zeros(n_points,n);
+Angular_velocity_real_z = zeros(n_points,n);
+
+Angular_velocity_estimated_x = zeros(n_points,n);
+Angular_velocity_estimated_y = zeros(n_points,n);
+Angular_velocity_estimated_z = zeros(n_points,n);
+
+Angular_velocity_reference_x = zeros(n_points,n);
+Angular_velocity_reference_y = zeros(n_points,n);
+Angular_velocity_reference_z = zeros(n_points,n);
+
+Angular_velocity_real_vs_estimated_x = zeros(n_points,n);
+Angular_velocity_real_vs_estimated_y = zeros(n_points,n);
+Angular_velocity_real_vs_estimated_z = zeros(n_points,n);
 for i = 1:n
     %b) Gyrometer 
 %     sat.sensors.gyro_sigma=0.2e-04; %to test
@@ -190,18 +239,52 @@ for i = 1:n
     UKF_angular_velocity_error_rate_y(:,i) = simResults.angular_velocities_error_rate.Data(:,2);
     UKF_angular_velocity_error_rate_z(:,i) = simResults.angular_velocities_error_rate.Data(:,3);
     
-    UKF_angle_estimation_error_x(:,i) = simResults.angle_estimation_error.Data(1,:);
-    UKF_angle_estimation_error_y(:,i) = simResults.angle_estimation_error.Data(2,:);
-    UKF_angle_estimation_error_z(:,i) = simResults.angle_estimation_error.Data(3,:);
+%     UKF_angle_estimation_error_x(:,i) = simResults.angle_real_vs_estimated.Data(:,1);
+%     UKF_angle_estimation_error_y(:,i) = simResults.angle_real_vs_estimated.Data(:,2);
+%     UKF_angle_estimation_error_z(:,i) = simResults.angle_real_vs_estimated.Data(:,3);
 
     UKF_bias_x(:,i) = simResults.gyro_bias.Data(1,:);
     UKF_bias_y(:,i) = simResults.gyro_bias.Data(2,:);
     UKF_bias_z(:,i) = simResults.gyro_bias.Data(3,:);
     
     N(i) = i;
+    
+
+    Q_real_0(:,i) = simResults.q_real.Data(1,:);
+    Q_real_1(:,i) = simResults.q_real.Data(2,:);
+    Q_real_2(:,i) = simResults.q_real.Data(3,:);
+    Q_real_3(:,i) = simResults.q_real.Data(4,:);
+
+    Q_estimated_0(:,i) = simResults.q_estimated.Data(:,1);
+    Q_estimated_1(:,i) = simResults.q_estimated.Data(:,2);
+    Q_estimated_2(:,i) = simResults.q_estimated.Data(:,3);
+    Q_estimated_3(:,i) = simResults.q_estimated.Data(:,4);
+
+
+    Q_reference_0(:,i) = simResults.q_ref.Data(1,:);
+    Q_reference_1(:,i) = simResults.q_ref.Data(2,:);
+    Q_reference_2(:,i) = simResults.q_ref.Data(3,:);
+    Q_reference_3(:,i) = simResults.q_ref.Data(4,:);   
+    
+    Angular_velocity_real_x(:,i) = rad2deg(simResults.w_real.Data(:,1));
+    Angular_velocity_real_y(:,i) = rad2deg(simResults.w_real.Data(:,2));
+    Angular_velocity_real_z(:,i) = rad2deg(simResults.w_real.Data(:,3));
+
+    Angular_velocity_estimated_x(:,i) = rad2deg(simResults.w_estimated.Data(:,1));
+    Angular_velocity_estimated_y(:,i) = rad2deg(simResults.w_estimated.Data(:,2));
+    Angular_velocity_estimated_z(:,i) = rad2deg(simResults.w_estimated.Data(:,3));
+
+    Angular_velocity_reference_x(:,i) = rad2deg(simResults.w_ref.Data(:,1));
+    Angular_velocity_reference_y(:,i) = rad2deg(simResults.w_ref.Data(:,2));
+    Angular_velocity_reference_z(:,i) = rad2deg(simResults.w_ref.Data(:,3));
+    
+    Angular_velocity_real_vs_estimated_x(:,i) = Angular_velocity_real_x(:,i) - Angular_velocity_estimated_x(:,i);
+    Angular_velocity_real_vs_estimated_y(:,i) = Angular_velocity_real_y(:,i) - Angular_velocity_estimated_y(:,i);
+    Angular_velocity_real_vs_estimated_z(:,i) = Angular_velocity_real_z(:,i) - Angular_velocity_estimated_z(:,i);
+
  end
 
-%Data processing
+%% Data processing
 UKF_average_magnitude_angle_error = zeros(n,3);
 
 UKF_average_magnitude_angular_velocities_error = zeros(n,3);
@@ -211,7 +294,28 @@ UKF_average_magnitude_angle_estimation_error = zeros(n,3);
 UKF_average_magnitude_bias = zeros(n,3);
 
 
+Attitude_average_mangnitude_real_vs_estimated = zeros(n,3);
+
+Angular_velocity_average_mangnitude_real_vs_estimated = zeros(n,3);
+
 for k =1:n
+    for j=1:n_points 
+    Euler_real = Quat2Euler([Q_real_0(j,k) Q_real_1(j,k) Q_real_2(j,k) Q_real_3(j,k)]);
+    Attitude_real_x(j,k) = Euler_real(1);
+    Attitude_real_y(j,k) = Euler_real(2);
+    Attitude_real_z(j,k) = Euler_real(3);
+    
+    Euler_estimated = Quat2Euler([Q_estimated_0(j,k) Q_estimated_1(j,k) Q_estimated_2(j,k) Q_estimated_3(j,k)]);
+    Attitude_estimated_x(j,k) = Euler_estimated(1);
+    Attitude_estimated_y(j,k) = Euler_estimated(2);
+    Attitude_estimated_z(j,k) = Euler_estimated(3);
+       
+    Euler_reference = Quat2Euler([Q_reference_0(j,k) Q_reference_1(j,k) Q_reference_2(j,k) Q_reference_3(j,k)]);
+    Attitude_reference_x(j,k) = Euler_reference(1);
+    Attitude_reference_y(j,k) = Euler_reference(2);
+    Attitude_reference_z(j,k) = Euler_reference(3);
+    end
+    
     %Compute the average magnitude (RMS) of the angle error
     UKF_average_magnitude_angle_error(k,1) = sqrt(mean(UKF_angle_error_rate_x(:,k).^2 ));
     UKF_average_magnitude_angle_error(k,2) = sqrt(mean(UKF_angle_error_rate_y(:,k).^2 ));
@@ -222,15 +326,28 @@ for k =1:n
     UKF_average_magnitude_angular_velocities_error(k,2) = sqrt(mean(UKF_angular_velocity_error_rate_y(:,k).^2 ));
     UKF_average_magnitude_angular_velocities_error(k,3) = sqrt(mean(UKF_angular_velocity_error_rate_z(:,k).^2 ));
     
-    %Compute the average magnitude (RMS) of the angle estimation error
-    UKF_average_magnitude_angle_estimation_error(k,1) = sqrt(mean(UKF_angle_estimation_error_x(:,k).^2 ));
-    UKF_average_magnitude_angle_estimation_error(k,2) = sqrt(mean(UKF_angle_estimation_error_y(:,k).^2 ));
-    UKF_average_magnitude_angle_estimation_error(k,3) = sqrt(mean(UKF_angle_estimation_error_z(:,k).^2 ));
-    
+
      %Compute the average magnitude (RMS) of the angle estimation error
     UKF_average_magnitude_bias(k,1) = sqrt(mean(UKF_bias_x(:,k).^2 ));
     UKF_average_magnitude_bias(k,2) = sqrt(mean(UKF_bias_y(:,k).^2 ));
     UKF_average_magnitude_bias(k,3) = sqrt(mean(UKF_bias_z(:,k).^2 ));   
+
+    Attitude_real_vs_estimated_x(:,k) = Attitude_real_x(:,k) - Attitude_estimated_x(:,k);
+    Attitude_real_vs_estimated_y(:,k) = Attitude_real_y(:,k) - Attitude_estimated_y(:,k);
+    Attitude_real_vs_estimated_z(:,k) = Attitude_real_z(:,k) - Attitude_estimated_z(:,k);
+
+
+    %Compute the average magnitude (RMS) real attitude vs estimated
+    Attitude_average_mangnitude_real_vs_estimated(k,1) = sqrt(mean(Attitude_real_vs_estimated_x(:,k).^2 ));
+    Attitude_average_mangnitude_real_vs_estimated(k,2) = sqrt(mean(Attitude_real_vs_estimated_y(:,k).^2 ));
+    Attitude_average_mangnitude_real_vs_estimated(k,3) = sqrt(mean(Attitude_real_vs_estimated_z(:,k).^2 ));
+    
+    
+    %Compute the average magnitude (RMS) real Angular_velocity vs estimated
+    Angular_velocity_average_mangnitude_real_vs_estimated(k,1) = sqrt(mean(Angular_velocity_real_vs_estimated_x(:,k).^2 ));
+    Angular_velocity_average_mangnitude_real_vs_estimated(k,2) = sqrt(mean(Angular_velocity_real_vs_estimated_y(:,k).^2 ));
+    Angular_velocity_average_mangnitude_real_vs_estimated(k,3) = sqrt(mean(Angular_velocity_real_vs_estimated_z(:,k).^2 ));
+    
 end
 
-save('UKF_Monte_Carlo_n25.mat');
+save('UKF_Monte_Carlo_n2.mat');
