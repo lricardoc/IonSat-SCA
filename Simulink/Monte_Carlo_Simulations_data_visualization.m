@@ -79,6 +79,32 @@ xlabel(t,'Time in seconds')
 ylabel(t,'Difference (in °)')
 
 
+figure;
+t = tiledlayout(3,1);
+nexttile;
+hold on;
+for j = 1:n
+    plot(Attitude_real_vs_estimated_process_x(:,j));
+end
+title('Roll angle');
+nexttile;
+hold on;
+for j = 1:n
+    plot(Attitude_real_vs_estimated_process_y(:,j));
+end
+title('Pitch angle');
+nexttile;
+hold on;
+for j = 1:n
+    plot(Attitude_real_vs_estimated_process_z(:,j));
+end
+title('Yaw angle');
+title(t,'Processed angle estimation error of the CubeSat')
+xlabel(t,'Time in seconds')
+ylabel(t,'Processed error (in °)')
+
+
+
 %Comparing real atitude with the reference attitude
 figure;
 t = tiledlayout(3,1);

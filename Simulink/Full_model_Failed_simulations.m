@@ -321,6 +321,7 @@ Failed_percentage_C4bis = 100*N_failed_C4bis/n;
 %% Criteria 5 : on the angle estimator error  
 % The uncertainty on the pointing accuracy must be between -3° and +3°
 %In other word
+
 %initialise the variables that will count the number of failed simulations
 N_failed_C5_x = 0;
 N_failed_C5_y = 0;
@@ -337,13 +338,13 @@ for i = 1:n
     C5_failed_y = 0;
     C5_failed_z = 0;
     for j=t_steady_state:t_sim
-        if (mean(Attitude_real_vs_estimated_x(j,i))>3) || (mean(Attitude_real_vs_estimated_x(j,i))<-3)
+        if (mean(Attitude_real_vs_estimated_process_x(j,i))>3) || (mean(Attitude_real_vs_estimated_process_x(j,i))<-3)
             C5_failed_x = C5_failed_x+1;
         end
-        if (mean(Attitude_real_vs_estimated_y(j,i))>3) || (mean(Attitude_real_vs_estimated_y(j,i))<-3)
+        if (mean(Attitude_real_vs_estimated_process_y(j,i))>3) || (mean(Attitude_real_vs_estimated_process_y(j,i))<-3)
             C5_failed_y = C5_failed_y+1;
         end
-        if (mean(Attitude_real_vs_estimated_z(j,i))>3) || (mean(Attitude_real_vs_estimated_z(j,i))<-3)
+        if (mean(Attitude_real_vs_estimated_process_z(j,i))>3) || (mean(Attitude_real_vs_estimated_process_z(j,i))<-3)
             C5_failed_z = C5_failed_z+1;
         end
     end
@@ -373,7 +374,7 @@ Failed_percentage_C5_z = 100*N_failed_C5_z/n;
 
 Failed_percentage_average_C5 = (Failed_percentage_C5_x + Failed_percentage_C5_y + Failed_percentage_C5_z)/3;
 
-%% Criteria 5bis : on the angle error rate, in case both PID and PID fails C5 at 100%
+%% Criteria 5bis : on the angle error rate, in case both UKF and UKF fails C5 at 100%
 % In the steady-state, the error rate must be between -9° and +9°
 
 %initialise the variables that will count the number of failed simulations
@@ -392,13 +393,13 @@ for i = 1:n
     C5bis_failed_y = 0;
     C5bis_failed_z = 0;
     for j=t_steady_state:t_sim
-        if (mean(Attitude_real_vs_estimated_x(j,i))>9) || (mean(Attitude_real_vs_estimated_x(j,i))<-9)
+        if (mean(Attitude_real_vs_estimated_process_x(j,i))>9) || (mean(Attitude_real_vs_estimated_process_x(j,i))<-9)
             C5bis_failed_x = C5bis_failed_x+1;
         end
-        if (mean(Attitude_real_vs_estimated_y(j,i))>9) || (mean(Attitude_real_vs_estimated_y(j,i))<-9)
+        if (mean(Attitude_real_vs_estimated_process_y(j,i))>9) || (mean(Attitude_real_vs_estimated_process_y(j,i))<-9)
             C5bis_failed_y = C5bis_failed_y+1;
         end
-        if (mean(Attitude_real_vs_estimated_z(j,i))>9) || (mean(Attitude_real_vs_estimated_z(j,i))<-9)
+        if (mean(Attitude_real_vs_estimated_process_z(j,i))>9) || (mean(Attitude_real_vs_estimated_process_z(j,i))<-9)
             C5bis_failed_z = C5bis_failed_z+1;
         end
     end

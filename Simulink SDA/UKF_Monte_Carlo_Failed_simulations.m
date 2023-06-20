@@ -231,6 +231,37 @@ Failed_percentage_average_C2bis = (Failed_percentage_C2bis_x + Failed_percentage
 %% Criteria 5 : on the angle estimator error  
 % The uncertainty on the pointing accuracy must be between -3° and +3°
 %In other word
+%%Rearange data
+% n_point = length(Attitude_real_vs_estimated_x(:,1));
+% Attitude_real_vs_estimated_process_x = zeros(n_point,n);
+% Attitude_real_vs_estimated_process_y = zeros(n_point,n);
+% Attitude_real_vs_estimated_process_z = zeros(n_point,n);
+% for i=1:100
+%     parfor j=1:n_point
+%         if Attitude_real_vs_estimated_x(j,i)>180 
+%             Attitude_real_vs_estimated_process_x(j,i)=mod(360,Attitude_real_vs_estimated_x(j,i));
+%         elseif Attitude_real_vs_estimated_x(j,i)<-180
+%             Attitude_real_vs_estimated_process_x(j,i)=mod(-360,Attitude_real_vs_estimated_x(j,i));
+%         else
+%             Attitude_real_vs_estimated_process_x(j,i)=Attitude_real_vs_estimated_x(j,i);
+%         end    
+%         if Attitude_real_vs_estimated_y(j,i)>180 
+%             Attitude_real_vs_estimated_process_y(j,i)=mod(360,Attitude_real_vs_estimated_y(j,i));
+%         elseif Attitude_real_vs_estimated_y(j,i)<-180
+%             Attitude_real_vs_estimated_process_y(j,i)=mod(-360,Attitude_real_vs_estimated_y(j,i));
+%         else
+%             Attitude_real_vs_estimated_process_y(j,i)=Attitude_real_vs_estimated_y(j,i);
+%         end    
+%         if Attitude_real_vs_estimated_z(j,i)>180 
+%             Attitude_real_vs_estimated_process_z(j,i)=mod(360,Attitude_real_vs_estimated_z(j,i));
+%         elseif Attitude_real_vs_estimated_z(j,i)<-180
+%             Attitude_real_vs_estimated_process_z(j,i)=mod(-360,Attitude_real_vs_estimated_z(j,i));
+%         else
+%             Attitude_real_vs_estimated_process_z(j,i)=Attitude_real_vs_estimated_z(j,i);
+%         end
+%     end
+% end
+
 %initialise the variables that will count the number of failed simulations
 N_failed_C5_x = 0;
 N_failed_C5_y = 0;
@@ -247,13 +278,13 @@ for i = 1:n
     C5_failed_y = 0;
     C5_failed_z = 0;
     for j=t_steady_state:t_sim
-        if (mean(Attitude_real_vs_estimated_x(j,i))>3) || (mean(Attitude_real_vs_estimated_x(j,i))<-3)
+        if (mean(Attitude_real_vs_estimated_process_x(j,i))>3) || (mean(Attitude_real_vs_estimated_process_x(j,i))<-3)
             C5_failed_x = C5_failed_x+1;
         end
-        if (mean(Attitude_real_vs_estimated_y(j,i))>3) || (mean(Attitude_real_vs_estimated_y(j,i))<-3)
+        if (mean(Attitude_real_vs_estimated_process_y(j,i))>3) || (mean(Attitude_real_vs_estimated_process_y(j,i))<-3)
             C5_failed_y = C5_failed_y+1;
         end
-        if (mean(Attitude_real_vs_estimated_z(j,i))>3) || (mean(Attitude_real_vs_estimated_z(j,i))<-3)
+        if (mean(Attitude_real_vs_estimated_process_z(j,i))>3) || (mean(Attitude_real_vs_estimated_process_z(j,i))<-3)
             C5_failed_z = C5_failed_z+1;
         end
     end
@@ -302,13 +333,13 @@ for i = 1:n
     C5bis_failed_y = 0;
     C5bis_failed_z = 0;
     for j=t_steady_state:t_sim
-        if (mean(Attitude_real_vs_estimated_x(j,i))>9) || (mean(Attitude_real_vs_estimated_x(j,i))<-9)
+        if (mean(Attitude_real_vs_estimated_process_x(j,i))>9) || (mean(Attitude_real_vs_estimated_process_x(j,i))<-9)
             C5bis_failed_x = C5bis_failed_x+1;
         end
-        if (mean(Attitude_real_vs_estimated_y(j,i))>9) || (mean(Attitude_real_vs_estimated_y(j,i))<-9)
+        if (mean(Attitude_real_vs_estimated_process_y(j,i))>9) || (mean(Attitude_real_vs_estimated_process_y(j,i))<-9)
             C5bis_failed_y = C5bis_failed_y+1;
         end
-        if (mean(Attitude_real_vs_estimated_z(j,i))>9) || (mean(Attitude_real_vs_estimated_z(j,i))<-9)
+        if (mean(Attitude_real_vs_estimated_process_z(j,i))>9) || (mean(Attitude_real_vs_estimated_process_z(j,i))<-9)
             C5bis_failed_z = C5bis_failed_z+1;
         end
     end

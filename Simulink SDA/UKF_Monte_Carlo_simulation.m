@@ -133,7 +133,7 @@ Vcss=0.01745^2;
 
 
 %% Monte Carlo simulation
-n = 2; % number of simulation, take around 12 minutes for n=10
+n = 100; % number of simulation, take around 12 minutes for n=10
 
 %initialize lists of data
 n_points = round(t_sim) + 1; % number of points to save per simulations
@@ -350,4 +350,33 @@ for k =1:n
     
 end
 
-save('UKF_Monte_Carlo_n2.mat');
+n_point = length(Attitude_real_vs_estimated_x(:,1));
+Attitude_real_vs_estimated_process_x = zeros(n_point,n);
+Attitude_real_vs_estimated_process_y = zeros(n_point,n);
+Attitude_real_vs_estimated_process_z = zeros(n_point,n);
+for i=1:100
+    parfor j=1:n_point
+        if Attitude_real_vs_estimated_x(j,i)>180 
+            Attitude_real_vs_estimated_process_x(j,i)=mod(360,Attitude_real_vs_estimated_x(j,i));
+        elseif Attitude_real_vs_estimated_x(j,i)<-180
+            Attitude_real_vs_estimated_process_x(j,i)=mod(-360,Attitude_real_vs_estimated_x(j,i));
+        else
+            Attitude_real_vs_estimated_process_x(j,i)=Attitude_real_vs_estimated_x(j,i);
+        end    
+        if Attitude_real_vs_estimated_y(j,i)>180 
+            Attitude_real_vs_estimated_process_y(j,i)=mod(360,Attitude_real_vs_estimated_y(j,i));
+        elseif Attitude_real_vs_estimated_y(j,i)<-180
+            Attitude_real_vs_estimated_process_y(j,i)=mod(-360,Attitude_real_vs_estimated_y(j,i));
+        else
+            Attitude_real_vs_estimated_process_y(j,i)=Attitude_real_vs_estimated_y(j,i);
+        end    
+        if Attitude_real_vs_estimated_z(j,i)>180 
+            Attitude_real_vs_estimated_process_z(j,i)=mod(360,Attitude_real_vs_estimated_z(j,i));
+        elseif Attitude_real_vs_estimated_z(j,i)<-180
+            Attitude_real_vs_estimated_process_z(j,i)=mod(-360,Attitude_real_vs_estimated_z(j,i));
+        else
+            Attitude_real_vs_estimated_process_z(j,i)=Attitude_real_vs_estimated_z(j,i);
+        end
+    end
+end
+save('UKF_Monte_Carlo_n100.mat');

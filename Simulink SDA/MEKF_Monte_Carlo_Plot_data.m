@@ -33,29 +33,84 @@ ylabel(t,'Error rate (in °)')
 
 
 % Plot the angle estimation rate
+% n_point = length(Attitude_real_vs_estimated_x(:,1));
+% Attitude_real_vs_estimated_process_x = zeros(n_point,n);
+% Attitude_real_vs_estimated_process_y = zeros(n_point,n);
+% Attitude_real_vs_estimated_process_z = zeros(n_point,n);
+% for i=1:100
+%     parfor j=1:n_point
+%         if Attitude_real_vs_estimated_x(j,i)>180 
+%             Attitude_real_vs_estimated_process_x(j,i)=mod(360,Attitude_real_vs_estimated_x(j,i));
+%         elseif Attitude_real_vs_estimated_x(j,i)<-180
+%             Attitude_real_vs_estimated_process_x(j,i)=mod(-360,Attitude_real_vs_estimated_x(j,i));
+%         else
+%             Attitude_real_vs_estimated_process_x(j,i)=Attitude_real_vs_estimated_x(j,i);
+%         end    
+%         if Attitude_real_vs_estimated_y(j,i)>180 
+%             Attitude_real_vs_estimated_process_y(j,i)=mod(360,Attitude_real_vs_estimated_y(j,i));
+%         elseif Attitude_real_vs_estimated_y(j,i)<-180
+%             Attitude_real_vs_estimated_process_y(j,i)=mod(-360,Attitude_real_vs_estimated_y(j,i));
+%         else
+%             Attitude_real_vs_estimated_process_y(j,i)=Attitude_real_vs_estimated_y(j,i);
+%         end    
+%         if Attitude_real_vs_estimated_z(j,i)>180 
+%             Attitude_real_vs_estimated_process_z(j,i)=mod(360,Attitude_real_vs_estimated_z(j,i));
+%         elseif Attitude_real_vs_estimated_z(j,i)<-180
+%             Attitude_real_vs_estimated_process_z(j,i)=mod(-360,Attitude_real_vs_estimated_z(j,i));
+%         else
+%             Attitude_real_vs_estimated_process_z(j,i)=Attitude_real_vs_estimated_z(j,i);
+%         end
+%     end
+% end
 figure;
 t = tiledlayout(3,1);
 nexttile;
 hold on;
 for j = 1:n
-    plot(MEKF_angle_estimation_error_x(:,j));
+    plot(Attitude_real_vs_estimated_x(:,j));
 end
 title('Roll angle');
 nexttile;
 hold on;
 for j = 1:n
-    plot(MEKF_angle_estimation_error_y(:,j));
+    plot(Attitude_real_vs_estimated_y(:,j));
 end
 title('Pitch angle');
 nexttile;
 hold on;
 for j = 1:n
-    plot(MEKF_angle_estimation_error_z(:,j));
+    plot(Attitude_real_vs_estimated_z(:,j));
 end
 title('Yaw angle');
 title(t,'Angle estimation error rate of the CubeSat')
 xlabel(t,'Time in seconds')
 ylabel(t,'Error rate (in °)')
+
+
+figure;
+t = tiledlayout(3,1);
+nexttile;
+hold on;
+for j = 1:n
+    plot(Attitude_real_vs_estimated_process_x(:,j));
+end
+title('Roll angle');
+nexttile;
+hold on;
+for j = 1:n
+    plot(Attitude_real_vs_estimated_process_y(:,j));
+end
+title('Pitch angle');
+nexttile;
+hold on;
+for j = 1:n
+    plot(Attitude_real_vs_estimated_process_z(:,j));
+end
+title('Yaw angle');
+title(t,'Processed angle estimation error of the CubeSat')
+xlabel(t,'Time in seconds')
+ylabel(t,'Processed error (in °)')
+
 
 
 
