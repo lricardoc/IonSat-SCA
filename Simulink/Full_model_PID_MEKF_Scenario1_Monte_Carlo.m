@@ -58,19 +58,20 @@ Ts=1;          %sampling time for Gyro
 sat.sensors.mag_sigma=5.0e-08;
 PSDmtm=sat.sensors.mag_sigma^2*Tss;
 %b) Gyrometer 
-sat.sensors.gyro_sigma=2.620e-04; %original value
-sat.sensors.gyro_sigma=0.2e-04; %to test
-sat.sensors.gyro_bias=1.160e-04; %original value
-sat.sensors.gyro_bias=0.160e-05; %to test
-PSDgyro=sat.sensors.gyro_sigma^2*Ts;
-PSDbias=sat.sensors.gyro_bias^2*Ts;
-b_offset=2e-4;
-b_offset=2e-2;
-b_offset=sat.sensors.gyro_bias;
-%b_offset=0e-2;
-b_offset2=-1e-2;    %for the triangular signal
-b_offset2=0;    %for the triangular signal
-%b_offset2=sat.sensors.gyro_bias;
+% sat.sensors.gyro_sigma=2.620e-04; %original value
+% sat.sensors.gyro_sigma=0.2e-04; %to test
+% sat.sensors.gyro_bias=1.160e-04; %original value
+% sat.sensors.gyro_bias=0.160e-05; %to test
+% PSDgyro=sat.sensors.gyro_sigma^2*Ts;
+% PSDbias=sat.sensors.gyro_bias^2*Ts;
+% b_offset=2e-4;
+% b_offset=2e-2;
+% b_offset=sat.sensors.gyro_bias;
+% %b_offset=0e-2;
+% b_offset2=-1e-2;    %for the triangular signal
+% b_offset2=0;    %for the triangular signal
+% %b_offset2=sat.sensors.gyro_bias;
+
 %c) Fin Sun Sensor (FSS)
 sat.sensors.sun_sigma=0.001164;
 PSDfss=sat.sensors.sun_sigma^2*Tss;
@@ -215,6 +216,9 @@ n = 100; % number of simulation, take around 12 minutes for n=10
 %initialize lists of data
 n_points = round(t_sim) + 1; % number of points to save per simulations
 
+GYRO_sigma = zeros(1,n);
+Gyro_bias = zeros(1,n);
+
 Alpha0 = zeros(1,n);
 Beta0 = zeros(1,n);
 Gamma0 = zeros(1,n);
@@ -329,6 +333,21 @@ sat.inertia = [I_xx I_xy I_xz;
                I_xz I_yz I_zz];
 for i = 1:n
     % Add noise to initial conditions
+    sat.sensors.gyro_sigma = (2.620e-04)*0.5 +rand*(2.620e-04); %to test
+    sat.sensors.gyro_bias=(1.160e-04)*0.5 +rand*(1.160e-04); %to test   
+    
+    PSDgyro=sat.sensors.gyro_sigma^2*Ts;
+    PSDbias=sat.sensors.gyro_bias^2*Ts;
+    
+    b_offset=sat.sensors.gyro_bias;
+    b_offset2=-1e-2;    %for the triangular signal
+    
+    
+    GYRO_sigma(i) = sat.sensors.gyro_sigma;
+    Gyro_bias(i) = sat.sensors.gyro_bias;
+    
+  
+    
     %Randomize IONSat's inertia at -+20% of the fixed inertia
     I_xx =  0.0702*8/10 + 0.0702*rand*2/5;
     I_yy =  0.113*8/10 + 0.113*rand*2/5;

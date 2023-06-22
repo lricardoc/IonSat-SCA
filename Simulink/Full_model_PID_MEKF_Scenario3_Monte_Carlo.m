@@ -57,19 +57,19 @@ Ts=1;          %sampling time for Gyro
 sat.sensors.mag_sigma=5.0e-08;
 PSDmtm=sat.sensors.mag_sigma^2*Tss;
 %b) Gyrometer 
-sat.sensors.gyro_sigma=2.620e-04; %original value
-sat.sensors.gyro_sigma=0.2e-04; %to test
-sat.sensors.gyro_bias=1.160e-04; %original value
-sat.sensors.gyro_bias=0.160e-05; %to test
-PSDgyro=sat.sensors.gyro_sigma^2*Ts;
-PSDbias=sat.sensors.gyro_bias^2*Ts;
-b_offset=2e-4;
-b_offset=2e-2;
-b_offset=sat.sensors.gyro_bias;
-%b_offset=0e-2;
-b_offset2=-1e-2;    %for the triangular signal
-b_offset2=0;    %for the triangular signal
-%b_offset2=sat.sensors.gyro_bias;
+% sat.sensors.gyro_sigma=2.620e-04; %original value
+% sat.sensors.gyro_sigma=0.2e-04; %to test
+% sat.sensors.gyro_bias=1.160e-04; %original value
+% sat.sensors.gyro_bias=0.160e-05; %to test
+% PSDgyro=sat.sensors.gyro_sigma^2*Ts;
+% PSDbias=sat.sensors.gyro_bias^2*Ts;
+% b_offset=2e-4;
+% b_offset=2e-2;
+% b_offset=sat.sensors.gyro_bias;
+% %b_offset=0e-2;
+% b_offset2=-1e-2;    %for the triangular signal
+% b_offset2=0;    %for the triangular signal
+% %b_offset2=sat.sensors.gyro_bias;
 %c) Fin Sun Sensor (FSS)
 sat.sensors.sun_sigma=0.001164;
 PSDfss=sat.sensors.sun_sigma^2*Tss;
@@ -328,6 +328,7 @@ sat_inertia = sat.inertia;
 
 for i = 1:n
     % Add noise to initial conditions
+
     sat.sensors.gyro_sigma = (2.620e-04)*0.5 +rand*(2.620e-04); %to test
     sat.sensors.gyro_bias=(1.160e-04)*0.5 +rand*(1.160e-04); %to test   
     
@@ -341,7 +342,6 @@ for i = 1:n
     GYRO_sigma(i) = sat.sensors.gyro_sigma;
     Gyro_bias(i) = sat.sensors.gyro_bias;
     
-
      %Orbit: Initialisation of Keplerian parameters
     orbit.a = 6378+300;
     orbit.e = 0.001;    %eccentricity
@@ -377,7 +377,7 @@ for i = 1:n
     N(i)=i;
 
     % run the simulink 
-    simResults = sim('IonSatSimulationF_UKF.slx');
+    simResults = sim('IonSatSimulationF_MEKF.slx');
     
     
     %save the data
@@ -567,7 +567,4 @@ for i=1:100
     end
 end
 
-save('PID_UKF_scenario3_9orbit_3profile_n100.mat');
- 
- 
- 
+save('PID_MEKF_scenario3_9orbit_3profile_n100.mat');
