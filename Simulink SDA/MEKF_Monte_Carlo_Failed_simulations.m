@@ -236,6 +236,7 @@ Failed_percentage_average_C2bis = (Failed_percentage_C2bis_x + Failed_percentage
 % Attitude_real_vs_estimated_process_x = zeros(n_point,n);
 % Attitude_real_vs_estimated_process_y = zeros(n_point,n);
 % Attitude_real_vs_estimated_process_z = zeros(n_point,n);
+% Attitude_average_mangnitude_real_vs_estimated_process = zeros(n,3);
 % for i=1:100
 %     parfor j=1:n_point
 %         if Attitude_real_vs_estimated_x(j,i)>180 
@@ -260,6 +261,9 @@ Failed_percentage_average_C2bis = (Failed_percentage_C2bis_x + Failed_percentage
 %             Attitude_real_vs_estimated_process_z(j,i)=Attitude_real_vs_estimated_z(j,i);
 %         end
 %     end
+%     Attitude_average_mangnitude_real_vs_estimated_process(i,1) = sqrt(mean(Attitude_real_vs_estimated_x(:,i).^2 ));
+%     Attitude_average_mangnitude_real_vs_estimated_process(i,2) = sqrt(mean(Attitude_real_vs_estimated_y(:,i).^2 ));
+%     Attitude_average_mangnitude_real_vs_estimated_process(i,3) = sqrt(mean(Attitude_real_vs_estimated_z(:,i).^2 ));  
 % end
 
 %initialise the variables that will count the number of failed simulations
@@ -442,7 +446,7 @@ end
 
 for i=1:n_failed_C5
     failed_index = Failed_index_list_C5(i);
-    MEKF_failed_average_mangitude_angle_estimation_error(:,i) = Attitude_average_mangnitude_real_vs_estimated(failed_index,:);
+    MEKF_failed_average_mangitude_angle_estimation_error(:,i) = Attitude_average_mangnitude_real_vs_estimated_process(failed_index,:);
 end
 
 

@@ -291,9 +291,9 @@ tiledlayout(2,1);
 nexttile;
 %plot the average magnitude of the angle error
 hold on;
-scatter(N,Attitude_average_mangnitude_real_vs_estimated(:,1));
-scatter(N,Attitude_average_mangnitude_real_vs_estimated(:,2));
-scatter(N,Attitude_average_mangnitude_real_vs_estimated(:,3));
+scatter(N,Attitude_average_mangnitude_real_vs_estimated_process(:,1));
+scatter(N,Attitude_average_mangnitude_real_vs_estimated_process(:,2));
+scatter(N,Attitude_average_mangnitude_real_vs_estimated_process(:,3));
 legend('X axis','Y axis','Z axis')
 xlabel('n-th simulation');
 ylabel('Angle error (in °)');

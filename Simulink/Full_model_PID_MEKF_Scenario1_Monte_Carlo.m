@@ -382,7 +382,7 @@ for i = 1:n
 
 
     % run the simulink 
-    simResults = sim('IonSatSimulationF_UKF.slx');
+    simResults = sim('IonSatSimulationF_MEKF.slx');
     
     
     %save the data
@@ -554,7 +554,7 @@ Attitude_real_vs_estimated_process_z = zeros(n_point,n);
 
 Attitude_average_mangnitude_real_vs_estimated_process = zeros(n,3);
 
-for i=1:100
+for i=1:n
     parfor j=1:n_point
         if Attitude_real_vs_estimated_x(j,i)>180 
             Attitude_real_vs_estimated_process_x(j,i)=mod(360,Attitude_real_vs_estimated_x(j,i));
@@ -584,5 +584,4 @@ for i=1:100
     
 end
 
-save('PID_UKF_scenario1_inertia_pm20_SS_partially_active_n100.mat');
-
+save('PID_MEKF_scenario1_inertia_pm20_SS_partially_active_n100.mat');

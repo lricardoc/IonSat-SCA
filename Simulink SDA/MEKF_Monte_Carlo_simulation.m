@@ -349,11 +349,14 @@ for k =1:n
     Angular_velocity_average_mangnitude_real_vs_estimated(k,3) = sqrt(mean(Angular_velocity_real_vs_estimated_z(:,k).^2 ));
     
 end
-
+%% 
 n_point = length(Attitude_real_vs_estimated_x(:,1));
 Attitude_real_vs_estimated_process_x = zeros(n_point,n);
 Attitude_real_vs_estimated_process_y = zeros(n_point,n);
 Attitude_real_vs_estimated_process_z = zeros(n_point,n);
+
+Attitude_average_mangnitude_real_vs_estimated_process = zeros(n,3);
+
 for i=1:100
     parfor j=1:n_point
         if Attitude_real_vs_estimated_x(j,i)>180 
@@ -378,6 +381,10 @@ for i=1:100
             Attitude_real_vs_estimated_process_z(j,i)=Attitude_real_vs_estimated_z(j,i);
         end
     end
+    Attitude_average_mangnitude_real_vs_estimated_process(i,1) = sqrt(mean(Attitude_real_vs_estimated_process_x(:,i).^2 ));
+    Attitude_average_mangnitude_real_vs_estimated_process(i,2) = sqrt(mean(Attitude_real_vs_estimated_process_y(:,i).^2 ));
+    Attitude_average_mangnitude_real_vs_estimated_process(i,3) = sqrt(mean(Attitude_real_vs_estimated_process_z(:,i).^2 ));
+    
 end
 
-save('MEKF_Monte_Carlo_n100.mat');
+save('MEKF_Monte_Carlo_SS_partially_active_n100.mat');

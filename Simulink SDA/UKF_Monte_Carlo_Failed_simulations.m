@@ -231,7 +231,7 @@ Failed_percentage_average_C2bis = (Failed_percentage_C2bis_x + Failed_percentage
 %% Criteria 5 : on the angle estimator error  
 % The uncertainty on the pointing accuracy must be between -3° and +3°
 %In other word
-%%Rearange data
+% %Rearange data
 % n_point = length(Attitude_real_vs_estimated_x(:,1));
 % Attitude_real_vs_estimated_process_x = zeros(n_point,n);
 % Attitude_real_vs_estimated_process_y = zeros(n_point,n);
