@@ -18,7 +18,14 @@ load('workspace.mat')
 %Not necessary while perturbations not implemented
 load('LOAS.mat')
 
+%% Controller
 
+Controller = 1; % 1=PID; 0=LQR
+
+%LQR feedback gain
+K = [0.00053417  0  0  0.0070506  0  0;
+    0  0.00071733 0  0  0.00840481  0;
+    0  0  0.00081350 0  0  0.010476]; %q=0.004 r=4000
 %% Declare variables
 %time step based on gyro sampling frequency: 
 TimeStep = 1;        %fixed-step size in solver, Default time step=0.25
@@ -182,7 +189,7 @@ IonSataero.av_density_vs_alt = SNAP_aeromodel.av_density_vs_alt;
 IonSataero.alt_range = SNAP_aeromodel.alt_range;
 
 %% Thruster activation
-thruster_on_off = 0;
+thruster_on_off = 0; %0=off; 1=on
 
 %Thruster direction and activation:
 sat.thruster.force=0.00075; % Force of thruster in [N]

@@ -256,7 +256,7 @@ end
 title('z axis');
 xlabel(a,'Time in seconds');
 ylabel(a,'Angular velocity error rate (in °/s)');
-title(a,'Angular velocity difference betwwen the real and the estimated state')
+title(a,'Angular velocity difference betwwen the reference and the estimated state')
 
 
 
@@ -334,7 +334,7 @@ xlabel('n-th simulation');
 ylabel('Angular velocities error (in °/s)');
 title('Average magnitude of the difference between the real and the reference angular velocities');
 
-
+%% 
 %average magnitude reference vs estimated
 figure;
 tiledlayout(2,1);

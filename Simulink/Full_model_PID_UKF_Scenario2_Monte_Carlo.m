@@ -17,8 +17,14 @@ load('T.mat')
 load('workspace.mat')
 %Not necessary while perturbations not implemented
 load('LOAS.mat')
+%% Controller
 
+Controller = 1; % 1=PID; 0=LQR
 
+%LQR feedback gain
+K = [0.00053417  0  0  0.0070506  0  0;
+    0  0.00071733 0  0  0.00840481  0;
+    0  0  0.00081350 0  0  0.010476]; %q=0.004 r=4000
 %% Declare variables
 %time step based on gyro sampling frequency: 
 TimeStep = 1;        %fixed-step size in solver, Default time step=0.25
@@ -59,17 +65,16 @@ sat.sensors.mag_sigma=5.0e-08;
 PSDmtm=sat.sensors.mag_sigma^2*Tss;
 %b) Gyrometer 
 sat.sensors.gyro_sigma=2.620e-04; %original value
-sat.sensors.gyro_sigma=0.2e-04; %to test
+%sat.sensors.gyro_sigma=0.2e-04; %to test
 sat.sensors.gyro_bias=1.160e-04; %original value
-sat.sensors.gyro_bias=0.160e-05; %to test
+%sat.sensors.gyro_bias=0.160e-05; %to test
 PSDgyro=sat.sensors.gyro_sigma^2*Ts;
 PSDbias=sat.sensors.gyro_bias^2*Ts;
-b_offset=2e-4;
-b_offset=2e-2;
+
 b_offset=sat.sensors.gyro_bias;
 %b_offset=0e-2;
 b_offset2=-1e-2;    %for the triangular signal
-b_offset2=0;    %for the triangular signal
+%b_offset2=0;    %for the triangular signal
 %b_offset2=sat.sensors.gyro_bias;
 %c) Fin Sun Sensor (FSS)
 sat.sensors.sun_sigma=0.001164;
@@ -181,12 +186,12 @@ IonSataero.av_density_vs_alt = SNAP_aeromodel.av_density_vs_alt;
 IonSataero.alt_range = SNAP_aeromodel.alt_range;
 
 %% Thruster activation
-thruster_on_off = 1;
+thruster_on_off = 1; %0 = off ; 1 = on
 
 
 
 %% Monte Carlo simulation
-n = 100; % number of simulation, take around 12 minutes for n=10
+n = 10; % number of simulation, take around 12 minutes for n=10
 
 %initialize lists of data
 n_points = round(t_sim) + 1; % number of points to save per simulations
@@ -546,8 +551,9 @@ for k =1:n
     Angular_velocity_average_mangnitude_estimated_vs_reference(k,2) = sqrt(mean(Angular_velocity_estimated_vs_reference_y(:,k).^2 ));
     Angular_velocity_average_mangnitude_estimated_vs_reference(k,3) = sqrt(mean(Angular_velocity_estimated_vs_reference_z(:,k).^2 ));     
 end
-
+%% 
 n_point = length(Attitude_real_vs_estimated_x(:,1));
+
 Attitude_real_vs_estimated_process_x = zeros(n_point,n);
 Attitude_real_vs_estimated_process_y = zeros(n_point,n);
 Attitude_real_vs_estimated_process_z = zeros(n_point,n);
