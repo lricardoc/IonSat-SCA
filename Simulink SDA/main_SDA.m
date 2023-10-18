@@ -18,7 +18,7 @@ orbit.nu = 0;       %True anomaly [degrees]
 %i = 98: notice that for the date 21/3 (equinox) the RAAN (O) is close to the beta angle.
 
 %POINTING MODE
-MODE = 2;   %"sun-aero" pointing mode
+MODE = 4;   %"sun-aero" pointing mode
 % 1: "orbital" Reference quaternion is aligned with ORF. 
 % 2: "sun-aero" Reference quaternion is such that x is aligned with velocity 
 %and z is aligned as best as possible with the sun direction to maximize the power generation 

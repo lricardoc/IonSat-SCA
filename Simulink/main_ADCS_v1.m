@@ -26,23 +26,23 @@ orbit.O = 146;      %Right ascension of the right ascending node [degrees] %max 
 orbit.o = 344;      %Argument of the perigee [degrees]                      %max 90, min 0      %90
 orbit.nu = 0;       %True anomaly [degrees]
 
-%initialize
-%Initial_XYZ_VxVyVz = Kepler2Carts([orbit.a; orbit.e; deg2rad(orbit.i); deg2rad(orbit.O); deg2rad(orbit.o); deg2rad(orbit.nu)]);
-
-%Attitude: Initialisation of angles and rotational speeds:
-%Initial orientation in ZYX (alpha,beta,gamma) Euler angles [degrees]
-att.alpha = 40;     
-att.beta = -10;
-att.gamma = 60;
-att.alpha = 00;     
-att.beta = -10;
-att.gamma = 00;
+%Initialisation of date
+date.year = 2022;
+date.month = 1;
+date.day = 1;
+date.hours = 0;
+date.minutes = 0;
+date.seconds = 0;
 
 
-%Initial angular velocities in each axis (x,y,z) of body frame [degrees/sec]
-att.wx0 = -0.01;        
-att.wy0 = 0.01;
-att.wz0 = 0.01;
+
+
+%Get initial position and velocity
+[orbit.r,orbit.v] = orb2rv_init(orbit.a,orbit.e,orbit.i*pi/180,orbit.O*pi/180,orbit.o*pi/180,orbit.nu*pi/180,0,0,0);
+%Get Sun initial direction
+%Implement the position of the Sun with respect to the Earth for initialization date with DE405.
+orbit.sun_ECI_0 = (planetEphemeris(juliandate(date.year,date.month,date.day),'Earth','Sun'))';
+orbit.sun_ECI_0 = orbit.sun_ECI_0/norm (orbit.sun_ECI_0);   %get unit vector
 
 %Get initial position and velocity
 [orbit.r,orbit.v] = orb2rv_init(orbit.a,orbit.e,orbit.i*pi/180,orbit.O*pi/180,orbit.o*pi/180,orbit.nu*pi/180,0,0,0);
@@ -143,14 +143,16 @@ if MODE == 8
 end
 
 
-%Initialisation of date
-date.year = 2022;
-date.month = 1;
-date.day = 1;
-date.hours = 0;
-date.minutes = 0;
-date.seconds = 0;
+%Attitude: Initialisation of angles and rotational speeds:
+%Initial orientation in ZYX (alpha,beta,gamma) Euler angles [degrees]
+att.alpha = 40;     
+att.beta = -10;
+att.gamma = 60;
 
+%Initial angular velocities in each axis (x,y,z) of body frame [degrees/sec]
+att.wx0 = -0.01;        
+att.wy0 = 0.01;
+att.wz0 = 0.01;
 
 %% Declare variables
 %time step based on gyro sampling frequency: 
@@ -167,23 +169,16 @@ t_sim = N_orbits*Torbit;
 %Determine the order of approximation for IGRF model of the earth's
 %magnetic field nmax (must be equal or less than 13)
 nmax = 2;
-
 %Determine whether you are using full IGRF model or dipole approximation
 %1 for true, 0 for false
 Use_IGRF = 1; 
-%Use_IGRF = 1; 
 %Determine whether you are using full IGRF model or dipole approximation
-%for the Kalman Filter
-%1 for true, 0 for false
+%for the Kalman Filter; 1 for true, 0 for false
 Use_IGRF_KF = 1; 
-%Use_IGRF_KF = 1; 
-
-
 %Decide whether you'd like to use control or not
 %A value of 1 (True) entails that you'd like to simulate a realistic model
 %for the control system, and 0 (False) means you assume ideal no control conditions
 Enable_control = 0;
-
 %Enable whether the sensors are considering eclipses or not
 Enable_eclipse = 1;
 
@@ -225,14 +220,14 @@ Pinv_RW_repartition     %executes the following code lines:
 % sat.wheel.repartition_metrix_4RW_inverse = pinv(sat.wheel.repartition_matrix_4RW);
 
 %% Load other parameters
-%load('SatConstants.mat')
-%load('workspace.mat') %for 2021 simulation
-sat.inertia = [0.06   0   0;...   %already saved
-                0   0.09  0;...
-                0     0   0.14];
-sat.mass = 12;      %Satellite Mass [kg]
-sat.CoG = [0;5.1;-4.2]/1000;   %Satellite Center of Gravity [m] in the BRF
-%Needs to agree with the CoG calculated in the aerodynamic torque.
+% %load('SatConstants.mat')
+% %load('workspace.mat') %for 2021 simulation
+% sat.inertia = [0.06   0   0;...   %already saved
+%                 0   0.09  0;...
+%                 0     0   0.14];
+% sat.mass = 12;      %Satellite Mass [kg]
+% sat.CoG = [0;5.1;-4.2]/1000;   %Satellite Center of Gravity [m] in the BRF
+% %Needs to agree with the CoG calculated in the aerodynamic torque.
 
 %% Other disturbance block parameters
 %%% Model of Perturbation Torques

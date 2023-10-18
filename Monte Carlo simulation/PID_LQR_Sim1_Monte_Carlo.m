@@ -73,7 +73,7 @@ sat.thruster.Nfirings=3;            %number of thrust firings
 
 
 %Monte Carlo simulation
-n = 100; % number of simulation, take around 12 minutes for n=10
+n = 300; % number of simulation, take around 12 minutes for n=10
 
 %initialize lists of data
 n_points = round(t_sim) + 1; % number of points to save per simulations
@@ -137,14 +137,14 @@ for i = 1:n
     MODE_manager;
     
     %intial angles
-    att.alpha = 5;   % Yaw  
-    att.beta = -5;     % Pitch   
-    att.gamma = 5;    % Roll   
+    att.alpha = 1;   % Yaw  
+    att.beta = -1;     % Pitch   
+    att.gamma = 1;    % Roll   
 
     %Initial angular velocities in each axis (x,y,z) of body frame [degrees/sec]
-    att.wx0 = 0;    
-    att.wy0 = -0;
-    att.wz0 = 0;
+    att.wx0 = 0.1;    
+    att.wy0 = -0.1;
+    att.wz0 = 0.1;
 
     %Save the inital conditions
     Alpha0(i) = att.alpha;
@@ -213,7 +213,7 @@ for k =1:n
     PID_RW_average_power_consumtion(k) = mean(PID_total_power_consumption(:,k));
 end
 
-save('PID_Sim1_Inertia_pm20_percent_n100.mat');
+save('PID_Sim1_Inertia_pm20_percent_n300.mat');
 
 %% LQR
 %Clear all the variables except for the RW failure matrix
@@ -299,7 +299,7 @@ K = [0.00053417  0  0  0.0070506  0  0;
 
 
 %Monte Carlo simulation
-n = 100; % number of simulation, it take between 95 and 120 minutes for n=100
+n = 300; % number of simulation, it take between 95 and 120 minutes for n=100
 
 %initialize lists of data
 n_points = round(t_sim) + 1; % number of points to save per simulations
@@ -377,18 +377,18 @@ for i = 1:n
 %     att.beta = 360*rand - 180;     % Pitch   
 %     att.gamma = 360*rand - 180;    % Roll   
 % 
-    att.alpha = 5;   % Yaw  
-    att.beta = -5;     % Pitch   
-    att.gamma = 5;    % Roll   
+    att.alpha = 1;   % Yaw  
+    att.beta = -1;     % Pitch   
+    att.gamma = 1;    % Roll   
 
     %Initial angular velocities in each axis (x,y,z) of body frame [degrees/sec]
 %     att.wx0 = 40*rand - 20;    % generate random number between -5 and +5    
 %     att.wy0 = 40*rand - 20;
 %     att.wz0 = 40*rand - 20;
 %     
-    att.wx0 = 0;    % generate random number between -5 and +5    
-    att.wy0 = -0;
-    att.wz0 = 0;
+    att.wx0 = 0.1;    % generate random number between -5 and +5    
+    att.wy0 = -0.1;
+    att.wz0 = 0.1;
 
     %Save the inital conditions
     Alpha0(i) = att.alpha;
@@ -464,5 +464,5 @@ for k =1:n
     LQR_RW_average_power_consumtion(k) = mean(LQR_total_power_consumption(:,k));
 end
 
-save('LQR_Sim1_Inertia_pm20_percent_n100.mat');
+save('LQR_Sim1_Inertia_pm20_percent_n300.mat');
 

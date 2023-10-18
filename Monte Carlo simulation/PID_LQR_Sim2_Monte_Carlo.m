@@ -55,7 +55,7 @@ IonSataero.alt_range = SNAP_aeromodel.alt_range;
           %number of thrust firings
 
 %%Monte Carlo simulation
-n = 300; % number of simulation, take around 12 minutes for n=10
+n = 3; % number of simulation, take around 12 minutes for n=10
 
 %initialize lists of data
 n_points = round(t_sim) + 1; % number of points to save per simulations
@@ -121,8 +121,11 @@ for i = 1:n
     
     %Thruster applied point in BRF:
     x_force_thruster= 182 + 2*rand;       %Distance from the geometric center x axis in [mm]
-    y_force_thruster= -1 + 2*rand;      %Distance from the geometric center y axis in [mm]
+    %y_force_thruster= -1 + 2*rand;      %Distance from the geometric center y axis in [mm]
+    y_force_thruster = -30 + 60*rand;
+    
     z_force_thruster= -1 +2*rand;      %Distance from the geometric center z axis in [mm]
+    
     
     sat.thruster.point=[-x_force_thruster;y_force_thruster;z_force_thruster]/1e3;    
                                 %Distance from the geometric center (BRF) in [m]
@@ -162,9 +165,9 @@ for i = 1:n
 %     att.wy0 = 40*rand - 20;
 %     att.wz0 = 40*rand - 20;
 %     
-    att.wx0 = 0;    
-    att.wy0 = -0;
-    att.wz0 = 0;
+    att.wx0 = 0.1;    
+    att.wy0 = 0.1;
+    att.wz0 = 0.1;
 
     %Save the inital conditions
     Alpha0(i) = att.alpha;
@@ -233,7 +236,7 @@ for k =1:n
     PID_RW_average_power_consumtion(k) = mean(PID_total_power_consumption(:,k));
 end
 
-save('PID_Monte_Carlo_Sim2_Thrust_activation_300km_Norbit6_n300.mat');
+save('PID_Monte_Carlo_Sim2_Thrust_activation_y3cm_300km_Norbit6_n3.mat');
 
 
 
@@ -299,7 +302,7 @@ K = [0.00053417  0  0  0.0070506  0  0;
 
 
 %%Monte Carlo simulation
-n = 300; % number of simulation, it take between 95 and 120 minutes for n=100
+n = 3; % number of simulation, it take between 95 and 120 minutes for n=100
 
 %initialize lists of data
 n_points = round(t_sim) + 1; % number of points to save per simulations
@@ -361,7 +364,9 @@ for i = 1:n
     
     %Thruster applied point in BRF:
     x_force_thruster= 182 + 2*rand;       %Distance from the geometric center x axis in [mm]
-    y_force_thruster= -1 + 2*rand;      %Distance from the geometric center y axis in [mm]
+    %y_force_thruster= -1 + 2*rand;      %Distance from the geometric center y axis in [mm]
+    y_force_thruster = 300;
+
     z_force_thruster= -1 +2*rand;      %Distance from the geometric center z axis in [mm]
     
     sat.thruster.point=[-x_force_thruster;y_force_thruster;z_force_thruster]/1e3;    
@@ -474,8 +479,8 @@ for k =1:n
     LQR_RW_average_power_consumtion(k) = mean(LQR_total_power_consumption(:,k));
 end
 
-save('LQR_Monte_Carlo_Sim2_Thrust_activation_300km_Norbit6_n300.mat');
+save('LQR_Monte_Carlo_Sim2_Thrust_activation_y3cm_300km_Norbit6_n3.mat');
 
 
 %% Simulation at 270km and n=50; same conditions for the other parameters
-PID_LQR_Sim2_Monte_Carlo_270km_n50;
+%PID_LQR_Sim2_Monte_Carlo_270km_n50;

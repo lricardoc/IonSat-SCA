@@ -362,7 +362,7 @@ end
 %initialize an array that will only contain the values of failed simulations
 PID_failed_average_magnitude_angle_error = zeros(3,n_failed_C1); 
 PID_failed_average_magnitude_angular_velocities_error = zeros(3,n_failed_C2); 
-PID_failed_RW_average_power_consumtion =zeros(n_failed_C2);
+PID_failed_RW_average_power_consumtion =zeros(1,n_failed_C2);
 
 for i=1:n_failed_C1
     failed_index = Failed_index_list_C1(i);
