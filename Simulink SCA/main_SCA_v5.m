@@ -213,6 +213,8 @@ sat.thruster.firstimpulse=4000;     %first thrust after start sim in [s]
                                     %needs to be less than waiting time
 sat.thruster.Nfirings=3;            %number of thrust firings
 %% Simulation
+
+
 Control_v7_PID                %MATLAB R2020b, latest one working fine
 
 

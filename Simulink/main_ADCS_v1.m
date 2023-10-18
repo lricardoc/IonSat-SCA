@@ -6,7 +6,7 @@ clc
 %% Loading the Data
 %Loads the necessary physical variables describing the satellite and its
 %components
-load('SatConstant_Updated_04-2023.mat')
+load('SatConstant_Updated_09-2023.mat')
 load('data.mat')
 load('Simulation.mat')
 load('C.mat')
@@ -43,6 +43,14 @@ att.gamma = 00;
 att.wx0 = -0.01;        
 att.wy0 = 0.01;
 att.wz0 = 0.01;
+
+%Get initial position and velocity
+[orbit.r,orbit.v] = orb2rv_init(orbit.a,orbit.e,orbit.i*pi/180,orbit.O*pi/180,orbit.o*pi/180,orbit.nu*pi/180,0,0,0);
+%Get Sun initial direction
+%Implement the position of the Sun with respect to the Earth for initialization date with DE405.
+orbit.sun_ECI_0 = (planetEphemeris(juliandate(date.year,date.month,date.day),'Earth','Sun'))';
+orbit.sun_ECI_0 = orbit.sun_ECI_0/norm (orbit.sun_ECI_0);   %get unit vector
+
 
 %POINTING MODE
 MODE = 2;   %"sun-aero" pointing mode
