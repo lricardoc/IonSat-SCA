@@ -136,7 +136,8 @@ save('LLSat_3U','SNAP_aeromodel')
 load('LLSat_3U');
 figure()
 mesh(SNAP_aeromodel.Az*180/pi, SNAP_aeromodel.El*180/pi, SNAP_aeromodel.A_drag')
-set(gcf,'color','w');
+%set(gcf,'color','w');
+set(gcf,'color','black');
             %set(gca,'XTick',[0:30:90]);
             %set(gca,'YTick',[0:30:180]);
             title('Surface drag projection')
