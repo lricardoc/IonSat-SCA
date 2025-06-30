@@ -53,9 +53,12 @@ heigth_body = 10.4; %in cm, dimension of CubeSat in z axis (BRF)
 %origin represents the geometric center of the body.
 %This is the CoG:
 %CoGmeters = [0;5.1;-4.2]/1000; %CoG in meters (see ADCS simulation code)
+%Worst case scenario: CoGmeters = [1;1;-10]/1000; 
 %CoG=origin+(round(CoGmeters/(Resolution/100)))'; calculate automatically
+%origin is 220, 220, 220.
 %CoG  = [181 181 178];  % overwrite, numerical rounding caused odd results.
-CoG  = [221 221 218];  % overwrite, numerical rounding caused odd results.
+%CoG  = [221 221 218];  % overwrite, numerical rounding caused odd results.
+CoG  = [210 221 221];  % overwrite, numerical rounding caused odd results.
 %offset of 1.2mm along both the x- and y-axis as defined in the TRSJ, 
 % in addition to an offset of 20mm along the z-axis as specified by the 
 % Cubesat design standard.
@@ -129,33 +132,35 @@ SNAP_aeromodel.av_density_vs_alt = [2.53e-10 6.24e-11 1.95e-11 6.98e-12 2.72e-12
 SNAP_aeromodel.up_density_vs_alt = [3.52e-10 1.06e-10 3.96e-11 1.66e-11 7.55e-12 3.61e-12 1.8e-12 9.25e-13 4.89e-13 2.64e-13 1.47e-13 ]; %% averages, Kg/m3
 
 %save('LLSat_1U','SNAP_aeromodel')
-save('LLSat_3U','SNAP_aeromodel')
+save('LLSat_3U_2','SNAP_aeromodel')
 %end of script
 
 %% Plot Aerodynamic torque
 %the following is just to plot, to have an idea of the value of the torque
 %load('LLSat_1U');
-load('LLSat_3U');
-figure()
-mesh(SNAP_aeromodel.Az*180/pi, SNAP_aeromodel.El*180/pi, SNAP_aeromodel.A_drag')
-%set(gcf,'color','w');
-set(gcf,'color','black');
-            %set(gca,'XTick',[0:30:90]);
-            %set(gca,'YTick',[0:30:180]);
-            title('Surface drag projection')
-            ylabel('Elevation Angle (degrees)')
-            xlabel('Azimuth Angle (degrees)')
-            %zlabel('Pitch Torque Factor (N.m / [Velocity^2 * Air Density)')
-            zlabel('Surface projected (m^2)')
+load('LLSat_3U_2');
+% figure()
+% mesh(SNAP_aeromodel.Az*180/pi, SNAP_aeromodel.El*180/pi, SNAP_aeromodel.A_drag')
+% %set(gcf,'color','w');
+% set(gcf,'color','black');
+%             %set(gca,'XTick',[0:30:90]);
+%             %set(gca,'YTick',[0:30:180]);
+%             title('Surface drag projection')
+%             ylabel('Elevation Angle (degrees)')
+%             xlabel('Azimuth Angle (degrees)')
+%             %zlabel('Pitch Torque Factor (N.m / [Velocity^2 * Air Density)')
+%             zlabel('Surface projected (m^2)')
 
 vel=7725.84; %circular orbital velocity at 300km
 %dens=8.19e-12;  %atmosphere density at 300km low density
-dens=1.95e-11;  %atmosphere density at 300km average density
+%dens=1.95e-11;  %atmosphere density at 300km average density
+dens=1.00e-11;  %atmosphere density at 300km average density
 
 %mesh(SNAP_aeromodel.roll*180/pi, SNAP_aeromodel.pitch*180/pi, SNAP_aeromodel.T)
 figure()
 mesh(SNAP_aeromodel.Az*180/pi, SNAP_aeromodel.El*180/pi, SNAP_aeromodel.T*(dens*vel^2))
-set(gcf,'color','w');
+%set(gcf,'color','w');
+set(gcf,'color','black');
             %set(gca,'XTick',[0:30:90]);
             %set(gca,'YTick',[0:30:180]);
             title('Aerodynamic torque profile')
